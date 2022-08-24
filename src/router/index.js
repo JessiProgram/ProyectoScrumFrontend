@@ -1,24 +1,26 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import autenticado from '@/middlewares/autenticado'
+import noAutenticado from '@/middlewares/noAutenticado'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'home1',
+    meta: {
+      middleware: noAutenticado
+    },
+    component: () => import('../views/index.vue')
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('../views/AboutView.vue')
-  },
-  {
-    path: '/google',
-    name: 'google',
-    component: () => import('../views/Google.vue')
+    path: '/inicio',
+    name: 'home2',
+    meta: {
+      middleware: autenticado
+    },
+    component: () => import('../views/inicio.vue')
   },
 ]
 
