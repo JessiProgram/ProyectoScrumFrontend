@@ -16,10 +16,33 @@
 
         <div class="ml-4">
             <h3 class="title">Login With Google</h3>
+
+            
         </div>
 
         <v-spacer />
+        <v-menu
+            bottom
+            left
+        >
+        <v-list>
+            <v-list-item>
+                <v-list-item-title>Click Me 1</v-list-item-title>
+            </v-list-item>
 
+            <v-list-item>
+                <v-list-item-title>Click Me 2</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item>
+                <v-list-item-title>Click Me 3</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item>
+                <v-list-item-title>Click Me 4</v-list-item-title>
+            </v-list-item>
+            </v-list>
+        </v-menu>
         <v-btn 
             v-if="$store.getters['usuario/estaAutenticado']" 
             class="white--text"
