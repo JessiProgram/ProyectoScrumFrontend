@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import autenticado from '@/middlewares/autenticado'
 import noAutenticado from '@/middlewares/noAutenticado'
 
+import routerAdmin from './helpers/admin.js'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -70,6 +72,7 @@ const routes = [
     },
     component: () => import('../views/proyecto/tipoHistoriasUsuario.vue')
   },
+  ...routerAdmin,
 ]
 
 const router = new VueRouter({

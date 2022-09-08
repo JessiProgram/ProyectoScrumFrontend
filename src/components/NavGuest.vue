@@ -15,7 +15,9 @@
         </template>
 
         <div class="ml-4">
-            <h3 class="title">Login With Google</h3>
+            <h3 class="title">
+                ScrumLAB
+            </h3>
 
             
         </div>

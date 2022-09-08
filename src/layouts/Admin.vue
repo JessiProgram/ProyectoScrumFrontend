@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <!-- Navigation -->
-        <NavDefault />
+        <NavAdmin />
 
         <!-- Main -->
         <main class="layoutDefault__main">
@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import NavDefault from '@/components/NavDefault.vue';
+import NavAdmin from '@/components/NavAdmin.vue';
 import FooterDefault from '@/components/FooterDefault.vue';
 
 export default {
     components: {
-        NavDefault,
+        NavAdmin,
         FooterDefault,
     },
 }

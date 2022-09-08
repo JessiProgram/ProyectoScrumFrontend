@@ -7,7 +7,6 @@
         height="50"
         dark
     >
-    
         <template v-slot:img="{ props }">
             <v-img
             v-bind="props"
@@ -24,25 +23,15 @@
         <v-spacer></v-spacer>
 
         <v-btn
-            v-if="$store.getters['usuario/esAdministrador']"
-            to="/administracion"
+            to="/inicio"
             class="mr-2"
             outlined
             color="white"
         >
-            Administración
-        </v-btn>
-        
-        <v-btn
-            class="mr-2"
-            outlined
-            color="white"
-        >
-            Proyectos
+            Volver
         </v-btn>
 
         <v-btn
-            @click="logout"
             class="mr-2"
             outlined
             color="white"
@@ -55,12 +44,7 @@
 
 <script>
 export default {
-    methods: {
-        async logout() {
-            await this.$store.dispatch('usuario/logout')
-            this.$router.push('/')
-        }
-    }
+
 }
 </script>
 
