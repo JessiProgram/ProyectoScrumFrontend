@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import store from '..'
 import axios from '../../plugins/axios'
 
 
@@ -121,7 +122,6 @@ export default {
                 }
 
             }
-
             
             console.log('permisos',permisos)
 
@@ -133,12 +133,19 @@ export default {
             commit('setDatosUsuario', datosUsuarioModelo)
 
         },
+
         logout: async ({commit}, data) => {
             // Token
             commit('setIdToken', '')
 
             // Usuario
             commit('setDatosUsuario', null)
+
+            commit('setPermisosUsuario', [])
+
+            commit('setRolesUsuario', [])
+
+
         },
         updateToken: async ({commit}, data) => {
             

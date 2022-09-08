@@ -7,6 +7,7 @@
         height="50"
         dark
     >
+    
         <template v-slot:img="{ props }">
             <v-img
             v-bind="props"
@@ -18,7 +19,7 @@
             <h3 class="title">Login With Google</h3>
         
         </div>
-
+        <v-spacer />
     </v-app-bar>
 </template>
 
