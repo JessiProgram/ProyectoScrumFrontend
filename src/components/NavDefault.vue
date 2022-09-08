@@ -7,6 +7,7 @@
         height="50"
         dark
     >
+    
         <template v-slot:img="{ props }">
             <v-img
             v-bind="props"
