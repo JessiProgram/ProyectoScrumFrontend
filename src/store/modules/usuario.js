@@ -24,15 +24,37 @@ export default {
         getDatosUsuario (state) {
             return state.datosUsuario
         },
-        getPermisosUsuario () {
+        getPermisosUsuario (state) {
             return state.permisosUsuario
         },
         getRolesUsuario (state) {
             return state.rolesUsuario
         },
+        
+        // OTROS
         estaAutenticado (state) {
             return !!state.idToken.length
         },
+        esAdministrador (state) {
+            const roles_admin = [
+                'modificar_roles_externos_de_usuario',
+                'crear_rol_externo',
+                'listar_roles_externos',
+                'actualizar_rol_externo',
+                'borrar_rol_externo',
+            ]
+
+            let tieneAlgunRol = false
+            for (let i = 0; i < roles_admin.length; i++) {
+                const rol_admin = roles_admin[i]
+                if (state.permisosUsuario.includes(rol_admin)) {
+                    tieneAlgunRol = true
+                    break
+                }
+            }
+
+            return tieneAlgunRol
+        }
     },
     mutations: {
         setIdToken (state, idToken) {
@@ -61,55 +83,43 @@ export default {
             // Set IdToken
             commit('setIdToken', idToken)
 
-            // Llamamos al backend
+            // Configuracion de headers para la api
             let config = {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${idToken}` 
                 }
             }
-
+            
+            
+            // Datos del body para la api
             let body = {}
-
-            let res = await axios.post('/usuario', body, config)
-            const datosUsuarioModelo = res.data[0].fields
-
+            
+            /**
+             * Crea el usuario y retorna el mismo si no existe,
+             * Retorna el usuario si existe.
+             */
+            const response1 = await axios.post('/usuario', body, config)
+            const datosUsuarioModelo = response1.data[0].fields
             console.log('datosUsuarioModelo',datosUsuarioModelo)
 
-            // obtener la lista de roles del usuario
-
+            
+            /**
+             * Obtenemos la lista de roles del usuario 
+             */
             let roles = []
-
-            config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}` 
-                }
-            }
-
-            res = await axios.get('/rol/usuario', config)
-
-            console.log("roles", res)
-
-            roles = res.data
-
+            const response2 = await axios.get('/rol/usuario', config)
+            roles = response2.data
             commit('setRolesUsuario', roles)
 
 
-            // obtener los permisos de los roles
-
+            /**
+             * Obtenemos la lista de permisos del usuario
+             */
             let permisos = []
-
             for (let i = 0; i < roles.length; i++) {
                 const idGrupo = roles[i];
                 // Llamamos al backend
-                config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${idToken}` 
-                    }
-                }
-
                 const resPermisos = await axios.get(`/rol?id=${idGrupo}`, config)
                 const permisosModelo = resPermisos.data
 
