@@ -1,5 +1,13 @@
 <template>
     <LayoutDefault>
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
+
         <v-container class="container" v-if="proyecto && proyecto.fields">
             <h3 class="mb-2">Bienvenido al Proyecto "{{proyecto.fields.nombre}}"</h3>
 
@@ -71,7 +79,24 @@ export default {
             idProyecto: 0,
             proyecto: null,
             dialog: false,
-            estadoProyecto:'INICIAR PROYECTO'
+            estadoProyecto:'INICIAR PROYECTO',
+            items: [
+                {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Proyectos',
+                    disabled: false,
+                    href: '/proyectos',
+                },
+                {
+                    text: `Proyecto ${this.$route.params.idProyecto}`,
+                    disabled: true,
+                    href: `/proyecto/${this.$route.params.idProyecto}`,
+                },
+            ],
         }
     },
     components: {

@@ -108,7 +108,6 @@ export default {
              */
             const response1 = await axios.post('/usuario', body, config)
             const datosUsuarioModelo = response1.data[0].fields
-            console.log('datosUsuarioModelo',datosUsuarioModelo)
 
             
             /**
@@ -130,20 +129,14 @@ export default {
                 const resPermisos = await axios.get(`/rol?id=${idGrupo}`, config)
                 const permisosModelo = resPermisos.data
 
-                console.log('resPermisos',resPermisos)
-
                 for (let j = 1; j < permisosModelo.length; j++) {
                     const permiso = permisosModelo[j];
                     permisos.push(permiso.fields.codename)
                 }
 
             }
-            
-            console.log('permisos',permisos)
 
             commit('setPermisosUsuario', permisos)
-
-            console.log('permisos',permisos)
             
             // Set usuario
             commit('setDatosUsuario', datosUsuarioModelo)
