@@ -402,7 +402,7 @@
                     }
                 }
 
-                await this.axios.delete(`/rol?id=${uidRolEliminacion}&tipoRol=Externo`, config)
+                await this.axios.delete(`/rol?id=${uidRolEliminacion}&tipoRol=Interno`, config)
 
                 const indexDelete = this.listaRoles.indexOf(v => v.uid === uidRolEliminacion)
                 this.listaRoles.splice(indexDelete, 1)
