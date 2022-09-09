@@ -22,15 +22,6 @@ rutas.push({
     component: () => import('@/views/administracion/usuarios.vue')
 })
 
-rutas.push({
-    path: '/administracion/usuario/:correo',
-    name: 'administracion_usuarios-correo',
-    meta: {
-        middleware: esAdmin,
-    },
-    component: () => import('@/views/administracion/usuario/_correo.vue')
-})
-
 // Roles
 rutas.push({
     path: '/administracion/roles',
@@ -41,23 +32,14 @@ rutas.push({
     component: () => import('@/views/administracion/roles.vue')
 })
 
+// Crear proyecto
 rutas.push({
-    path: '/administracion/rol/:idRol',
-    name: 'administracion_rol-idRol',
+    path: '/administracion/proyectos',
+    name: 'administracion_proyectos',
     meta: {
         middleware: esAdmin,
     },
-    component: () => import('@/views/administracion/rol/_idRol.vue')
+    component: () => import('@/views/administracion/proyectos.vue')
 })
-
-// // Crear proyecto
-// rutas.push({
-//     path: '/administracion/proyecto',
-//     name: 'administracion_proyecto',
-//     meta: {
-//         middleware: esAdmin,
-//     },
-//     component: () => import('@/views/administracion/index.vue')
-// })
 
 export default rutas

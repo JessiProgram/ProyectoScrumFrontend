@@ -1,5 +1,13 @@
 <template>
     <LayoutAdmin>
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
+
         <v-row class="container">
             <v-col cols="12" md="4">
                 <v-card
@@ -49,6 +57,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-btn
+                            to="/administracion/roles"
                             text
                             color="teal accent-4"
                         >
@@ -77,6 +86,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-btn
+                            to="/administracion/proyectos"
                             text
                             color="teal accent-4"
                         >
@@ -96,7 +106,18 @@
     name: 'HomeView',
     data() {
       return {
-
+        items: [
+            {
+                text: 'Inicio',
+                disabled: false,
+                href: '/inicio',
+            },
+            {
+                text: 'Administración',
+                disabled: true,
+                href: '/administracion',
+            },
+        ],
       }
     },
     components: {

@@ -1,6 +1,14 @@
 <template>
     <LayoutAdmin>
         <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
+
+        <div class="container">
             <v-card 
                 v-for="item in listaUsuarios" :key="item.uid" 
                 class="mx-auto"
@@ -118,6 +126,27 @@
                 
             </v-card>
         </v-dialog>
+
+
+        <v-dialog
+            v-model="processing.value"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="#683bce"
+                dark
+            >
+                <v-card-text class="pt-3">
+                    {{ processing.message }}
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </LayoutAdmin>
   </template>
   
@@ -130,10 +159,34 @@
         return {
             listaUsuarios: [],
             listaRoles: [],
+
             dialog: false,
             usuarioSeleccionado: null,
             rolesDelUsuario: [],
             listaRolesSeleccionados: [],
+
+            processing: {
+                value: false,
+                message: '',
+            },
+
+            items: [
+                {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Administración',
+                    disabled: false,
+                    href: '/administracion',
+                },
+                {
+                    text: 'Usuarios',
+                    disabled: true,
+                    href: '/administracion/usuarios',
+                },
+            ],
         }
     },
     components: {
@@ -145,47 +198,62 @@
             this.usuarioSeleccionado = data
         },
         async actualizarRolesDelUsuario () {
-            const listaRolesSeleccionadosActual = this.getListaRolesSeleccionados()
-
-            const idToken = this.$store.state.usuario.idToken
-
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}` 
-                }
+            this.processing = {
+                value: true,
+                message: `Actualizando roles del usuario.`,
             }
 
-            const idsRolAdd = []
-            const idsRolDelete = []
-            for (let i = 0; i < listaRolesSeleccionadosActual.length; i++) {
-                const elementActual = listaRolesSeleccionadosActual[i]
-                const elementNuevo = this.listaRolesSeleccionados[i]
+            try {
+                const listaRolesSeleccionadosActual = this.getListaRolesSeleccionados()
 
-                if (elementNuevo) {
-                    idsRolAdd.push( this.listaRoles[i].uid )
+                const idToken = this.$store.state.usuario.idToken
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
                 }
+
+                const idsRolAdd = []
+                const idsRolDelete = []
+                for (let i = 0; i < listaRolesSeleccionadosActual.length; i++) {
+                    const elementActual = listaRolesSeleccionadosActual[i]
+                    const elementNuevo = this.listaRolesSeleccionados[i]
+
+                    if (elementNuevo) {
+                        idsRolAdd.push( this.listaRoles[i].uid )
+                    }
+                    
+                    if (elementActual && !elementNuevo) {
+                        idsRolDelete.push( this.listaRoles[i].uid )
+                    }
+                }
+
+                // Eliminacion de roles
+                const body2 = {
+                    email: this.usuarioSeleccionado.email,
+                    accion: 'eliminar', 
+                    roles: idsRolDelete
+                }
+                await this.axios.put(`/usuario/admin`, body2, config)
+
+                // Agregar roles
+                const body1 = {
+                    email: this.usuarioSeleccionado.email,
+                    accion: 'agregar', 
+                    roles: idsRolAdd
+                }
+                await this.axios.put(`/usuario/admin`, body1, config)
+            } catch (error) {
+                console.log('error', error)
                 
-                if (elementActual && !elementNuevo) {
-                    idsRolDelete.push( this.listaRoles[i].uid )
+            } finally {
+                this.processing = {
+                    value: false,
+                    message: ``,
                 }
             }
-
-            // Eliminacion de roles
-            const body2 = {
-                email: this.usuarioSeleccionado.email,
-                accion: 'eliminar', 
-                roles: idsRolDelete
-            }
-            await this.axios.put(`/usuario/admin`, body2, config)
-
-            // Agregar roles
-            const body1 = {
-                email: this.usuarioSeleccionado.email,
-                accion: 'agregar', 
-                roles: idsRolAdd
-            }
-            await this.axios.put(`/usuario/admin`, body1, config)
             
         },
         getListaRolesSeleccionados () {
