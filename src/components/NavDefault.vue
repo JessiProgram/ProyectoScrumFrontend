@@ -37,6 +37,7 @@
             class="mr-2"
             outlined
             color="white"
+            to="/proyectos"
         >
             Proyectos
         </v-btn>
