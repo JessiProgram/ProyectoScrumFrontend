@@ -30,7 +30,8 @@
                     v-if="$store.getters['usuario/estaAutenticado']" 
                     class="green--text mr-2 mb-2" 
                     outlined
-                    v-on:click=""
+                    :disabled="!posibleIniciar"
+                    v-on:click="iniciarProyecto()"
                     >
                         {{estadoProyecto}}
                     </v-btn>
@@ -62,12 +63,13 @@
 </template>
 <script>
 import LayoutDefault from '@/layouts/Default.vue';
-import axios from '../../plugins/axios'
+import axios from '@/plugins/axios'
 
 export default {
     name: '',
     data() {
         return {
+            posibleIniciar:false,
             idProyecto: 0,
             proyecto: null,
             dialog: false,
@@ -90,15 +92,36 @@ export default {
             }
         }
 
-        let body = {}
-
         let res = await axios.get(`proyecto?q=${this.idProyecto}`, config)
 
         this.proyecto = res.data[0]
 
+        this.posibleIniciar = this.proyecto.fields.estado !== 'iniciado'
+        this.estadoProyecto = this.proyecto.fields.estado === 'iniciado'?"Proyecto Iniciado":"Iniciar Proyecto"
+
         console.log('this.proyecto', this.proyecto)
     },
     methods: {
+        async iniciarProyecto(){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+
+            const body1 = {
+                id: this.idProyecto,
+            }
+            let res = await this.axios.put(`proyecto/iniciarProyecto`, body1, config)
+
+            this.estadoProyecto = "Proyecto Iniciado"
+            this.posibleIniciar = false
+
+            console.log("res",res)
+        }
 
     },
 
