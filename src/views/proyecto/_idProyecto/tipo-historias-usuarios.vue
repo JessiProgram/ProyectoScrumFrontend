@@ -1,5 +1,6 @@
 <template>
     <LayoutDefault>
+
         <v-container>
             <h3>Tipo Historias de Usuario</h3>
 
@@ -19,7 +20,6 @@
             </v-btn>
 
             {{listaTiposHU}}
-
         </v-container>
     </LayoutDefault>
 </template>
@@ -31,8 +31,32 @@ export default {
     name: '',
     data() {
         return {
-            idProyecto:0,
-            proyecto:null,
+            idProyeto: 0,
+            proyecto: null,
+
+            items: [
+                {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Proyectos',
+                    disabled: false,
+                    href: '/proyectos',
+                },
+                {
+                    text: `Proyecto ${this.$route.params.idProyecto}`,
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}`,
+                },
+                {
+                    text: 'Tipo historias usuarios',
+                    disabled: true,
+                    href: '/tipo-historias-usuarios',
+                },
+            ],
+
             nombre:'',
             listaTiposHU:[]
         }
@@ -43,6 +67,7 @@ export default {
     async mounted() {
         this.idProyecto = this.$route.params.idProyecto
         let idToken = this.$store.state.usuario.idToken
+
         // listamos tipos de HU
         // llamamos al backend y solicitamos lo proyectos del usuario
         // Llamamos al backend

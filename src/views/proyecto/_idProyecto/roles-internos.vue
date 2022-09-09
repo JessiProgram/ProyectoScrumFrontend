@@ -1,269 +1,704 @@
 <template>
     <LayoutDefault>
-        <v-container>
-            <h3>Roles Internos</h3>
 
-            <!--Crear un rol interno-->
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
+
+        <div class="container text-center">
             <v-btn
-            class="ma-2"
-            outlined
-            color="indigo"
-            v-on:click="dialog=true">
-                Agregar Rol
+                text
+                outlined
+                large
+                color="blue"
+                class="mb-10"
+                @click="dialogCreacion = true"
+            >
+                <v-icon left>
+                    mdi-plus
+                </v-icon>
+                Crear un rol
             </v-btn>
 
-            <v-divider class="my-10"></v-divider>
+            <v-card 
+                v-for="item in listaRoles" :key="item.uid" 
+                class="mx-auto mb-7"
+                width="600"
+            >
+                <v-img
+                    height="120px"
+                    :src="`https://source.unsplash.com/random/1440x900?sig=${item.uid}`"
+                >
+                    <v-card-title class="white--text mt-8">
+                        <v-avatar size="56">
+                        <img
+                            alt="user"
+                            :src="`https://robohash.org/${item.uid}?set=set4`"
+                        >
+                        </v-avatar>
+                        <p class="ml-3">
+                            {{ item.nombre }}
+                        </p>
+                    </v-card-title>
+                </v-img>
 
-            <!--Tabla datos-->
-            <v-data-table :headers="Cabeceras" :items="rolesInternos" :items-per-page="5" class="elevation-1">
-                <template v-slot:item.acciones="{ item }">
-                    <v-icon class="mr-3" @click="editar(item)">
-                        mdi-pencil
-                    </v-icon>
-                    <v-icon @click="borrar(item)">
-                        mdi-delete
-                    </v-icon>
-                </template>
-            </v-data-table>
+                <v-card-text class="text-center">
+                    <div class="">
+                        <v-btn
+                            @click="openDialogVerRol(item)"
+                            color="green"
+                            text
+                            outlined
+                            class="mr-2"
+                        >
+                            Actualizar rol
+                        </v-btn>
 
-        </v-container>
-        
-        <v-dialog 
-        v-model="dialog" 
-        persistent 
-        max-width="600px"
+                        <v-btn
+                            @click="openDialogEliminarRol(item)"
+                            color="red"
+                            text
+                            outlined
+                            class="mr-0"
+                        >
+                            Eliminar rol
+                        </v-btn>
+                    </div>
+                </v-card-text>
+            </v-card>
+        </div>
+
+        <v-dialog
+            v-model="dialog"
+            fullscreen
+            hide-overlay
+            transition="dialog-bottom-transition"
+        >
+            <v-card v-if="rolSeleccionado">
+                <v-toolbar
+                    dark
+                    color="primary"
+                >
+                    <v-btn
+                        icon
+                        dark
+                        @click="dialog = false"
+                    >
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>
+                        {{rolSeleccionado.nombre}}
+                    </v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                    </v-toolbar-items>
+                </v-toolbar>
+
+                <div class="container my-5 px-10">
+                    <v-row class="mt-3">
+                        <v-col cols="12" md="6">
+                            <h2>Nombre del rol:</h2>
+                            <v-divider class="mb-5" />
+                            <v-text-field
+                                v-model="datosActualizadosRol.nombre"
+                                label="Nombre del rol"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                            <h2>Descripción del rol:</h2>
+                            <v-divider class="mb-5" />
+                            <v-text-field
+                                v-model="datosActualizadosRol.descripcion"
+                                label="Descripción del rol"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+
+                    <v-btn
+                        @click="actualizarDatos"
+                        class="mt-3 mr-2"
+                        outlined
+                        color="green"
+                    >
+                        Actualizar datos
+                    </v-btn>
+
+                </div>
+
+                <v-divider></v-divider>
+
+                <div class="container mt-5">
+                    <h2>
+                        Permisos:
+                    </h2>
+
+                    <v-checkbox
+                        v-for="(item, index) in codigosPermisosInternos" :key="index"
+                        v-model="listaPermisosSeleccionados[index]"
+                        :label="`${nombresPermisosInternos[index]}`"
+                    ></v-checkbox>
+
+                    <v-btn
+                        @click="actualizarPermisosDelRol"
+                        class="mt-3 mr-2"
+                        outlined
+                        color="green"
+                    >
+                        Actualizar roles
+                    </v-btn>
+                </div>
+                
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+            v-model="dialogCreacion"
+            fullscreen
+            hide-overlay
+            transition="dialog-bottom-transition"
         >
             <v-card>
-                <v-card-title>
-                    <span class="text-h5">
-                        <h3>Rol: </h3>
-                    </span>
-                </v-card-title>
-                <v-card-text>
-                    <v-container>
-                        <v-row>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field label="Nombre" required v-model="nombreAgregar"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field label="Descripción" required v-model="descripcionAgregar">
-                                </v-text-field>
-                            </v-col>
-                            <v-col cols="12">
-                                <h4>Lista de Permisos</h4>
-                                <v-checkbox
-                                    v-for="(item, index) in listaPermisosInternosTotal" :key="index"
-                                    v-model="listaPermisosRol[index]"
-                                    :label="`${item}`"
-                                ></v-checkbox>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="dialog = false">
-                        Cerrar
+                <v-toolbar
+                    dark
+                    color="primary"
+                >
+                    <v-btn
+                        icon
+                        dark
+                        @click="dialogCreacion = false"
+                    >
+                        <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-btn color="blue darken-1" text @click="agregar();
-                    dialog = false;">
-                        Guardar
+                    <v-toolbar-title>
+                        Rol nuevo
+                    </v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                    </v-toolbar-items>
+                </v-toolbar>
+
+                <div class="container my-5 px-10">
+                    <v-row class="mt-3">
+                        <v-col cols="12" md="6">
+                            <h2>Nombre del rol:</h2>
+                            <v-divider class="mb-5" />
+                            <v-text-field
+                                v-model="datosRolNuevo.nombre"
+                                label="Nombre del rol"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                            <h2>Descripción del rol:</h2>
+                            <v-divider class="mb-5" />
+                            <v-text-field
+                                v-model="datosRolNuevo.descripcion"
+                                label="Descripción del rol"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+
+                </div>
+
+                <v-divider></v-divider>
+
+                <div class="container mt-5">
+                    <h2>
+                        Permisos:
+                    </h2>
+
+                    <v-checkbox
+                        v-for="(item, index) in codigosPermisosInternos" :key="index"
+                        v-model="datosRolNuevo.listaPermisosSeleccionados[index]"
+                        :label="`${nombresPermisosInternos[index]}`"
+                    ></v-checkbox>
+
+                    <v-btn
+                        @click="crearRol"
+                        class="mt-3 mr-2"
+                        outlined
+                        color="green"
+                    >
+                        Crear rol
+                    </v-btn>
+                </div>
+                
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+            v-model="processing.value"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="#683bce"
+                dark
+            >
+                <v-card-text class="pt-3">
+                    {{ processing.message }}
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+            v-model="dialogEliminacion"
+            v-if="datosRolEliminacion"
+            max-width="800px"
+        >
+            <v-card>
+                <v-card-title class="informacionAccion textoInformacionAccion">
+                    ¿Quieres eliminar este rol?
+                </v-card-title>
+                <v-card-text class="informacionAccion textoInformacionAccion">
+                    Esta acción eliminará el rol de forma permanente.
+                </v-card-text>
+                <v-card-text class="mt-5">
+                    Para confirmar que deseas eliminar este rol, escribe su nombre: 
+                    <b>{{ datosRolEliminacion.nombre }}</b>
+                </v-card-text>
+
+                <div class="container text-center" max-width="400px">
+                    <v-text-field
+                        class="inputConfirmacionAccion"
+                        v-model="confirmacionEliminacionRol"
+                        :label="datosRolEliminacion.nombre"
+                        required
+                    ></v-text-field>
+                </div>
+
+                <v-card-actions class="d-flex flex-row-reverse pb-5 pt-5">
+                    <v-btn
+                        class="ml-4 mr-3"
+                        :disabled="confirmacionEliminacionRol !== datosRolEliminacion.nombre"
+                        color="red"
+                        text
+                        @click="eliminarRol"
+                    >
+                        Eliminar rol
+                    </v-btn>
+
+                    <v-btn
+                        color="grey darken-2"
+                        text
+                        @click="dialogEliminacion = false"
+                    >
+                        Cerrar
                     </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-
     </LayoutDefault>
-</template>
-<script>
-import LayoutDefault from '@/layouts/Default.vue';
-import axios from '@/plugins/axios'
-
-export default {
-    name: '',
+  </template>
+  
+  <script>
+  import { codigosPermisosInternos, nombresPermisosInternos } from '@/helpers/permisosInternos.js'
+  import LayoutDefault from '@/layouts/Default.vue';
+  
+  export default {
+    name: 'HomeView',
     data() {
         return {
-            idProyecto: 0,
-            proyecto: null,
-            rolesInternos: [],
-            rolSeleccionado: {},
+            idProyecto: this.$route.params.idProyecto,
+            listaRoles: [],
+            codigosPermisosInternos: [],
+            nombresPermisosInternos: [],
+            
             dialog: false,
-            esAgregar: true,
-            Cabeceras: [
-                { text: 'Nombre', value: 'fields.nombre' },
-                { text: 'Descripcion', value: 'fields.descripcion' },
-                { text: 'Acciones', value: 'acciones' },
-            ],
+            rolSeleccionado: null,
+            permisosDelRol: [],
+            listaPermisosSeleccionados: [],
+            datosActualizadosRol: {
+                nombre: '',
+                descripcion: '',
+            },
 
-            listaPermisosInternosTotal:[
-            'proyectos.crear_proyecto',
-            'proyectos.eliminar_proyecto',
-            'proyectos.actualizar_proyecto',
-            'proyectos.archivar_proyecto',
-            'proyectos.cambiar_estado_proyecto',
-            'proyectos.listar_proyectos',
-            'proyectos.iniciar_proyecto',
-            'proyectos.crear_tipo_HU',
-            'proyectos.borrar_tipo_HU',
-            'proyectos.importar_roles_internos',
-            'proyectos.agregar_participante',
-            'proyectos.modificar_participante',
-            'proyectos.borrar_participante',
-            'proyectos.listar_participante',
-            'proyectos.listar_roles_internos',
-            'proyectos.crear_rol_interno',
-            'proyectos.actualizar_rol_interno',
-            'proyectos.borrar_rol_interno',
+            dialogCreacion: false,
+            datosRolNuevo: {
+                nombre: '',
+                descripcion: '',
+                listaPermisosSeleccionados: [],
+            },
+
+            dialogEliminacion: false,
+            datosRolEliminacion: null,
+            confirmacionEliminacionRol: '',
+
+            processing: {
+                value: false,
+                message: '',
+            },
+
+            items: [
+            {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Proyectos',
+                    disabled: false,
+                    href: '/proyectos',
+                },
+                {
+                    text: `Proyecto ${this.$route.params.idProyecto}`,
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}`,
+                },
+                {
+                    text: 'Roles internos',
+                    disabled: true,
+                    href: '',
+                },
             ],
-            // para actualizacion o agregacion
-            idRol:0,
-            listaPermisosRol: [],
-            nombre:'',
-            descripcion:'',
-            listaPermisosRolAgregar:[],
-            nombreAgregar:'',
-            descripcionAgregar:'',
-            rolInterno:{}
 
         }
     },
     components: {
         LayoutDefault,
     },
-    async mounted() {
-        this.idProyecto = this.$route.params.idProyecto
-        let idToken = this.$store.state.usuario.idToken
 
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${idToken}`
+    methods: {
+        openDialogVerRol (data) {
+            this.dialog = true
+            this.rolSeleccionado = data
+
+            this.datosActualizadosRol.nombre = this.rolSeleccionado.nombre
+            this.datosActualizadosRol.descripcion = this.rolSeleccionado.descripcion
+        },
+        openDialogEliminarRol (data) {
+            this.dialogEliminacion = true
+            this.datosRolEliminacion = data
+            this.confirmacionEliminacionRol = ''
+        },
+        async eliminarRol () {
+            const uidRolEliminacion = this.datosRolEliminacion.uid
+            this.dialogEliminacion = false
+
+            this.processing = {
+                value: true,
+                message: `Eliminando rol.`,
             }
-        }
 
-        // Listar roles externos
-        const response = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${this.idProyecto}`, config)
-        this.rolesInternos = response.data
-
-        console.log("rolesInternos", this.rolesInternos)
-    },
-
-    methods:{
-        async agregar(){
-
-            if(this.esAgregar){
-                // crear rol
-
-
-            } else {
-
+            try {
                 const idToken = this.$store.state.usuario.idToken
 
-                console.log('listaPermisosRol',this.listaPermisosRol)
-
-                let nuevosPermisosi= []
-                for (let i = 0; i < this.listaPermisosInternosTotal.length; i++) {
-                    const element = this.listaPermisosRol[i];
-                    if(!!element){
-                        console.log("Se agrega ",i)
-                        nuevosPermisosi.push(i)
-                    }
-                }
-
-                let nuevosPermisos = []
-                let num = 0
-                for (let i = 0; i < this.listaPermisosInternosTotal.length; i++) {
-                    if(i==nuevosPermisosi[num]){
-                        console.log("this.listaPermisosInternosTotal[nuevosPermisosi[i]]",this.listaPermisosInternosTotal[i])
-                        nuevosPermisos.push(this.listaPermisosInternosTotal[i])
-                        num++
-                    }
-                }
-                
-                console.log('this.listaPermisosRolAgregar',nuevosPermisos)
-
-                const config0 = {
+                const config = {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${idToken}` 
                     }
                 }
 
+                await this.axios.delete(`/rol?id=${uidRolEliminacion}&tipoRol=Externo`, config)
+
+                const indexDelete = this.listaRoles.indexOf(v => v.uid === uidRolEliminacion)
+                this.listaRoles.splice(indexDelete, 1)
+
+                this.dialogEliminacion = false
+
+            } catch (error) {
+                console.log('error', error)
+
+            } finally {
+                this.processing = {
+                    value: false,
+                    message: ``,
+                }
+            }
+        },
+        async crearRol () {
+            this.processing = {
+                value: true,
+                message: `Creando rol.`,
+            }
+
+            try {
+                const permisos = []
+                for (let i = 0; i < this.datosRolNuevo.listaPermisosSeleccionados.length; i++) {
+                    const element = this.datosRolNuevo.listaPermisosSeleccionados[i]
+                    if (element) permisos.push(this.codigosPermisosInternos[i])
+                }
+
+                const idToken = this.$store.state.usuario.idToken
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
+                }
+
+                const body = {
+                    idProyecto: this.idProyecto,
+                    nombre: this.datosRolNuevo.nombre,
+                    descripcion: this.datosRolNuevo.descripcion,
+                    tipo: 'Interno',
+                    permisos: permisos
+                }
+
+                const response = await this.axios.post(`/rol`, body, config)
+
+                this.listaRoles.push({
+                    uid: response.data[0].pk,
+                    ...response.data[0].fields,
+                })
+
+                this.dialogCreacion = false
+
+            } catch (error) {
+                console.log('error', error)
+
+            } finally {
+                this.processing = {
+                    value: false,
+                    message: ``,
+                }
+            }
+        },
+        async actualizarDatos () {
+            this.processing = {
+                value: true,
+                message: `Actualizando datos.`,
+            }
+
+            try {
+                const idToken = this.$store.state.usuario.idToken
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
+                }
+
+                const body1 = {
+                    id: this.rolSeleccionado.uid,
+                    idProyecto: this.idProyecto,
+                    nombreNuevo: this.datosActualizadosRol.nombre,
+                    descripcionNueva: this.datosActualizadosRol.descripcion,
+                    tipo: 'Interno',
+                    accion: '',
+                    permisos: []
+                }
+                
+                await this.axios.put(`/rol`, body1, config)
+
+                this.rolSeleccionado.nombre = this.datosActualizadosRol.nombre
+                this.rolSeleccionado.descripcion = this.datosActualizadosRol.descripcion
+            
+            } catch (error) {
+                console.log('error', error)
+
+            } finally {
+                this.processing = {
+                    value: false,
+                    message: ``,
+                }
+            }
+        },
+        async actualizarPermisosDelRol () {
+            this.processing = {
+                value: true,
+                message: `Actualizando permisos del rol ${this.rolSeleccionado.nombre}.`,
+            }
+
+            try {
+                const listaPermisosSeleccionadosActual = this.getListaPermisosSeleccionados()
+
+                const idToken = this.$store.state.usuario.idToken
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
+                }
+
+                const idsPermisoAdd = []
+                const idsPermisoDelete = []
+                for (let i = 0; i < listaPermisosSeleccionadosActual.length; i++) {
+                    const elementActual = listaPermisosSeleccionadosActual[i]
+                    const elementNuevo = this.listaPermisosSeleccionados[i]
+
+                    if (elementNuevo) {
+                        idsPermisoAdd.push( this.codigosPermisosInternos[i] )
+                    }
+                    
+                    if (elementActual && !elementNuevo) {
+                        idsPermisoDelete.push( this.codigosPermisosInternos[i] )
+                    }
+                }
 
                 // Eliminacion de roles
                 const body2 = {
-                    id: this.idRol,
+                    id: this.rolSeleccionado.uid,
                     idProyecto: this.idProyecto,
-                    nombreNuevo: this.nombreAgregar,
-                    descripcionNueva:this.descripcionAgregar,
+                    nombreNuevo: '',
+                    descripcionNueva: '',
                     tipo: 'Interno',
                     accion: 'eliminar',
-                    permisos: this.listaPermisosInternosTotal
+                    permisos: idsPermisoDelete
                 }
                 
-                await this.axios.put(`/rol`, body2, config0)
+                await this.axios.put(`/rol`, body2, config)
 
                 // Agregar roles
                 const body1 = {
-                    id: this.idRol,
+                    id: this.rolSeleccionado.uid,
                     idProyecto: this.idProyecto,
-                    nombreNuevo: this.nombreAgregar,
-                    descripcionNueva:this.descripcionAgregar,
+                    nombreNuevo: '',
+                    descripcionNueva: '',
                     tipo: 'Interno',
                     accion: 'agregar',
-                    permisos: nuevosPermisos
+                    permisos: idsPermisoAdd
                 }
                 
-                let a = await this.axios.put(`/rol`, body1, config0)
+                await this.axios.put(`/rol`, body1, config)
+                    
+            } catch (error) {
+                console.log('error', error)
 
-                console.log('a',a)
-
-
+            } finally {
+                this.processing = {
+                    value: false,
+                    message: ``,
+                }
+            }
+            
+        },
+        getListaPermisosSeleccionados () {
+            const listaPermisosSeleccionadosAux = Array.from({length: this.codigosPermisosInternos.length}, (v, i) => false)
+            for (let i = 0; i < this.codigosPermisosInternos.length; i++) {
+                const permiso = this.codigosPermisosInternos[i]
+                listaPermisosSeleccionadosAux[i] = !!this.permisosDelRol.find(v => {
+                    return permiso.includes(v.codename)
+                })
             }
 
-            this.esAgregar = true
+            return listaPermisosSeleccionadosAux
+        }
+    },
+    watch: {
+        rolSeleccionado: async function () {
+            if (!this.rolSeleccionado) return
 
-        },
-        async editar(rol){
-            this.esAgregar = false
-            // ponemos los valores
-            this.listaPermisosRol = []
-            this.nombreAgregar = rol.fields.nombre
-            this.descripcionAgregar = rol.fields.descripcion
-            this.idRol = rol.pk
-
-            // leer todos los permisos del rol
-
-            let idToken = this.$store.state.usuario.idToken
+            const idToken = this.$store.state.usuario.idToken
 
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}`
+                    Authorization: `Bearer ${idToken}` 
                 }
             }
-
-            // Listar roles externos
-            const response = await this.axios.get(`rol?id=${rol.pk}`, config)
-            this.rolInterno = response.data
-            for (let index = 1; index < this.rolInterno.length; index++) {
-                let listaPermisos = this.rolInterno[index].fields.codename;
-                this.listaPermisosRol.push(listaPermisos)
-            }      
-            console.log('listaPermisosRol',this.listaPermisosRol)
-
-            this.dialog = true
-
-        },
-        async borrar(){
             
+            const response = await this.axios.get(`/rol?id=${this.rolSeleccionado.uid}`, config)
+            this.permisosDelRol = response.data
+            .filter(v => v.model !== 'roles.rol')
+            .map(v => {
+                return {
+                    uid: v.pk,
+                    ...v.fields,
+                }
+            })
+
+            this.listaPermisosSeleccionados = this.getListaPermisosSeleccionados()
+        },
+        dialog: function () {
+            if (this.dialog) return 
+            this.rolSeleccionado = null
+            this.permisosDelRol = []
+            this.listaPermisosSeleccionados = []
+
+            this.datosActualizadosRol = {
+                nombre: '',
+                descripcion: '',
+            }
+        },
+        dialogCreacion: function () {
+            const listaPermisosSeleccionadosAux = Array.from({
+                length: this.codigosPermisosInternos.length
+            }, (v, i) => false)
+
+            this.datosRolNuevo = {
+                nombre: '',
+                descripcion: '',
+                listaPermisosSeleccionados: listaPermisosSeleccionadosAux,
+            }
+        },
+        dialogEliminacion: function () {
+            if (this.dialogEliminacion) return 
+            this.datosRolEliminacion = null
+            this.confirmacionEliminacionRol = ''
+        },
+    },
+    async created () {
+        const idToken = this.$store.state.usuario.idToken
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${idToken}` 
+            }
+        }
+
+        // Listar roles internos
+        const response = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${this.idProyecto}`, config)
+        const listaResponse = response.data
+
+        this.listaRoles = listaResponse
+        .map(v => {
+            const model = {
+                uid: v.pk,
+                ...v.fields,
+            }
+
+            return model
+        })
+
+        // Listar todos los permisos
+        this.codigosPermisosInternos = codigosPermisosInternos
+        this.nombresPermisosInternos = nombresPermisosInternos
+
+        const listaPermisosSeleccionadosAux = Array.from({
+            length: this.codigosPermisosInternos.length
+        }, (v, i) => false)
+
+        this.datosRolNuevo = {
+            nombre: '',
+            descripcion: '',
+            listaPermisosSeleccionados: listaPermisosSeleccionadosAux,
         }
     }
-
+  }
+  </script>
+  
+<style scoped>
+.informacionAccion {
+    /* rgba(230, 62, 62, 0.159) */
+    background-color: rgba(255, 29, 137, 0.159);
 }
-</script>
 
-<style>
+.textoInformacionAccion {
+    color: rgb(197, 52, 52);
+}
 
+.inputConfirmacionAccion {
+    margin-left: 12px;
+    margin-right: 12px;
+}
 </style>
+
+

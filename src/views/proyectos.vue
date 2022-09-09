@@ -1,9 +1,17 @@
 <template>
     <LayoutDefault>
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
+
         <v-container>
             <h3>LISTA DE MIS PROYECTOS</h3> 
 
-            <div v-for="proyecto of listaProyectos">
+            <div v-for="(proyecto, index) of listaProyectos" :key="index">
                 <v-card class="mx-auto" max-width="344" outlined>
                     <v-list-item three-line>
                         <v-list-item-content>
@@ -41,7 +49,19 @@ export default {
     name: '',
     data() {
         return {
-            listaProyectos: []
+            listaProyectos: [],
+            items: [
+                {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Proyectos',
+                    disabled: true,
+                    href: '/proyectos',
+                },
+            ],
         }
     },
     components: {
