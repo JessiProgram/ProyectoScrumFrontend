@@ -1,5 +1,6 @@
 <template>
     <LayoutDefault>
+
         <div class="container">
             <v-breadcrumbs :items="items">
                 <template v-slot:divider>
@@ -362,11 +363,13 @@
                     href: '',
                 },
             ],
+
         }
     },
     components: {
         LayoutDefault,
     },
+
     methods: {
         openDialogVerRol (data) {
             this.dialog = true
@@ -697,4 +700,5 @@
     margin-right: 12px;
 }
 </style>
+
 

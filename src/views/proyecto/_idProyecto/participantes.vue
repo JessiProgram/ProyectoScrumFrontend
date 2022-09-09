@@ -182,6 +182,7 @@
                 <div class="container mt-5">
                     <h2>
                         Roles del proyecto:
+
                     </h2>
 
                     <v-checkbox
@@ -326,6 +327,7 @@ export default {
     components: {
         LayoutDefault,
     },
+
 
     methods: {
         async openDialogAgregarParticipante () {
@@ -592,4 +594,5 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
 }
+
 </style>
