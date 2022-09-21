@@ -294,6 +294,7 @@ export default {
             rolesInternosDeParticipante: [],
             dialogEliminarParticipante: false,
             confirmacionEliminacionParticipante: '',
+            rolesDelUsuario: [],
 
             processing: {
                 value: false,
@@ -337,9 +338,36 @@ export default {
         async openDialogActualizarParticipante (data) {
             this.dialogActualizarParticipante = true
             this.participanteSeleccionado = data
-            this.rolesInternosDeParticipante = Array.from({
-                length: this.rolesInternos.length
-            }, (v, i) => false)
+
+            // buscar los roles internos del participante
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+            
+            const response = await this.axios.get(`/usuario/admin/roles?email=${this.participanteSeleccionado.email}`, config)
+            this.rolesDelUsuario = response.data.map(v => parseInt(v))
+
+            this.rolesInternosDeParticipante = this.getListaRolesSeleccionados()
+
+            // ---------------
+
+            console.log("this.participanteSeleccionado",this.participanteSeleccionado)
+            console.log("this.rolesInternosDeParticipante",this.rolesInternosDeParticipante)
+        },
+
+        getListaRolesSeleccionados () {
+            const listaRolesSeleccionadosAux = Array.from({length: this.rolesInternos.length}, (v, i) => false)
+            for (let i = 0; i < this.rolesInternos.length; i++) {
+                const rol = this.rolesInternos[i]
+                listaRolesSeleccionadosAux[i] = this.rolesDelUsuario.includes(rol.uid)
+            }
+
+            return listaRolesSeleccionadosAux
         },
 
         async openDialogEliminarParticipante (data) {
@@ -378,7 +406,7 @@ export default {
                     idUsuario: usuario.pk
                 }
 
-                await axios.post('/participantes', body, config)
+                await axios.post('/participantes/', body, config)
 
                 this.participantes.push({
                     uid: usuario.pk,
@@ -464,7 +492,7 @@ export default {
                     }
                 }
 
-                await axios.delete(`/participantes?email=${this.participanteSeleccionado.email}&idproyecto=${this.idProyecto}`, config)
+                await axios.delete(`/participantes/?email=${this.participanteSeleccionado.email}&idproyecto=${this.idProyecto}`, config)
 
                 const indexDeleted = this.participantes.findIndex(v => v.uid === this.participanteSeleccionado.uid)
                 this.participantes.splice(indexDeleted, 1)
@@ -489,6 +517,13 @@ export default {
         dialogActualizarParticipante: function () {
             if (this.dialogActualizarParticipante) {
                 
+
+
+
+
+
+
+
                 
                 return
             }

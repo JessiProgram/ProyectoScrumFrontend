@@ -402,7 +402,7 @@
                     }
                 }
 
-                await this.axios.delete(`/rol?id=${uidRolEliminacion}&tipoRol=Interno`, config)
+                await this.axios.delete(`/rol/?id=${uidRolEliminacion}&tipoRol=Interno`, config)
 
                 const indexDelete = this.listaRoles.indexOf(v => v.uid === uidRolEliminacion)
                 this.listaRoles.splice(indexDelete, 1)
@@ -449,7 +449,7 @@
                     permisos: permisos
                 }
 
-                const response = await this.axios.post(`/rol`, body, config)
+                const response = await this.axios.post(`/rol/`, body, config)
 
                 this.listaRoles.push({
                     uid: response.data[0].pk,
@@ -494,7 +494,7 @@
                     permisos: []
                 }
                 
-                await this.axios.put(`/rol`, body1, config)
+                await this.axios.put(`/rol/`, body1, config)
 
                 this.rolSeleccionado.nombre = this.datosActualizadosRol.nombre
                 this.rolSeleccionado.descripcion = this.datosActualizadosRol.descripcion
@@ -553,7 +553,7 @@
                     permisos: idsPermisoDelete
                 }
                 
-                await this.axios.put(`/rol`, body2, config)
+                await this.axios.put(`/rol/`, body2, config)
 
                 // Agregar roles
                 const body1 = {
@@ -566,7 +566,7 @@
                     permisos: idsPermisoAdd
                 }
                 
-                await this.axios.put(`/rol`, body1, config)
+                await this.axios.put(`/rol/`, body1, config)
                     
             } catch (error) {
                 console.log('error', error)
@@ -604,7 +604,7 @@
                 }
             }
             
-            const response = await this.axios.get(`/rol?id=${this.rolSeleccionado.uid}`, config)
+            const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}&tipo=Interno`, config)
             this.permisosDelRol = response.data
             .filter(v => v.model !== 'roles.rol')
             .map(v => {
@@ -613,6 +613,8 @@
                     ...v.fields,
                 }
             })
+
+            console.log('this.permisosDelRol',this.permisosDelRol)
 
             this.listaPermisosSeleccionados = this.getListaPermisosSeleccionados()
         },

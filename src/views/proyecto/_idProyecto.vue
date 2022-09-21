@@ -117,7 +117,7 @@ export default {
             }
         }
 
-        let res = await axios.get(`proyecto?q=${this.idProyecto}`, config)
+        let res = await axios.get(`proyecto/?q=${this.idProyecto}`, config)
 
         this.proyecto = res.data[0]
 
