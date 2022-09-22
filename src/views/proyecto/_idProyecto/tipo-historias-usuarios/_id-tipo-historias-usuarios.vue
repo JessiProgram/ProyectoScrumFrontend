@@ -13,8 +13,11 @@
             <h3>Columnas</h3>
             <v-text-field v-model="nombre" label="Nombre Nueva Columna" required></v-text-field>
 
-            <v-btn outlined :disabled="!nombre" @click="crear()" @loading="creando" color="indigo">
-                Agregar columna
+            <v-btn outlined :disabled="!nombre || (columnaSeleccionada && columnaSeleccionada.fields.nombre === nombre)" @click="crear()" @loading="creando" color="indigo">
+                <div v-if="!esActualizar">Agregar columna</div><div v-else>Actualizar columna</div>
+            </v-btn>
+            <v-btn v-if="esActualizar" outlined @click="limparSeleccion()" color="red" class="ml-3">
+                Cancelar
             </v-btn>
 
 
@@ -142,6 +145,8 @@ export default {
 
             columnas: [],
 
+            esActualizar: false,
+
             deshabilitarCambio: false,
         }
     },
@@ -241,33 +246,71 @@ export default {
 
         async crear() {
 
-            const idToken = this.$store.state.usuario.idToken
+            if (!this.esActualizar){
+                const idToken = this.$store.state.usuario.idToken
 
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}` 
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
                 }
-            }
 
-            const body = {
-                id_tipo_HU: this.idTipoHU,
-                id_proyecto: this.idProyecto,
-                nombre: this.nombre,
-            }
-            console.log('body',body)
-            const response = await this.axios.post(`/tipoHistoriaUsuario/columnas`, body, config)
-            
-            this.inicializarLista()
-            this.nombre = ''
-            alert("Creado Tipo Historia Usuario")
+                const body = {
+                    id_tipo_HU: this.idTipoHU,
+                    id_proyecto: this.idProyecto,
+                    nombre: this.nombre,
+                }
+                console.log('body',body)
+                const response = await this.axios.post(`/tipoHistoriaUsuario/columnas`, body, config)
+                
+                this.inicializarLista()
+                this.nombre = ''
+                alert("Creado Tipo Historia Usuario")
+            }else{
+             
+                const idToken = this.$store.state.usuario.idToken
 
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
+                }
+
+                const body = {
+                    id_proyecto: this.idProyecto,
+                    nombre: this.nombre,
+                    id_tipo_HU: this.idTipoHU,
+                    orden_origen: this.columnaSeleccionada.fields.orden,
+                    orden_destino: this.columnaSeleccionada.fields.orden
+                }
+                console.log('body',body)
+                const response = await this.axios.put(`/tipoHistoriaUsuario/columnas`, body, config)
+
+                alert("Columna Actualizada")
+
+                this.limparSeleccion()
+                this.inicializarLista()
+            }
         },
 
         async openDialogEliminarTipoHU(data) {
             this.dialogEliminarColumna = true
             this.columnaSeleccionada = data
             this.confirmacionEliminacionColumna = ''
+        },
+
+        async openDialogActualizarTipoHU(columna){
+            this.esActualizar = true
+            this.columnaSeleccionada = columna
+            this.nombre = columna.fields.nombre
+        },
+
+        limparSeleccion(){
+            this.nombre = ''
+            this.columnaSeleccionada = null
+            this.esActualizar = false
         },
 
         async actualizarOrden(columna, orden, baja){
