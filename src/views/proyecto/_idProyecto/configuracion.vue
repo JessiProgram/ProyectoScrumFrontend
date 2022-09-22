@@ -149,7 +149,7 @@ export default {
                     descripcion:this.descripcion
                 }
                 
-                await this.axios.put(`/proyecto`, body1, config)
+                await this.axios.put(`/proyecto/`, body1, config)
 
                 alert("Proyecto Actualizado")
         }

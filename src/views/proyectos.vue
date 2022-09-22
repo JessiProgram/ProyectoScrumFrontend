@@ -12,7 +12,7 @@
             <h3>LISTA DE MIS PROYECTOS</h3> 
 
             <div v-for="(proyecto, index) of listaProyectos" :key="index">
-                <v-card class="mx-auto" max-width="344" outlined>
+                <v-card class="mx-auto mb-4" max-width="344" outlined>
                     <v-list-item three-line>
                         <v-list-item-content>
                             <div class="text-overline mb-4">
