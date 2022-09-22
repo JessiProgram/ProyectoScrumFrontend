@@ -8,6 +8,7 @@ export const codigosPermisosInternos = [
     'proyectos.iniciar_proyecto',
     'proyectos.crear_tipo_HU',
     'proyectos.borrar_tipo_HU',
+    'proyectos.actualizar_tipo_HU',
     'proyectos.importar_roles_internos',
     'proyectos.agregar_participante',
     'proyectos.modificar_participante',
@@ -17,6 +18,8 @@ export const codigosPermisosInternos = [
     'proyectos.crear_rol_interno',
     'proyectos.actualizar_rol_interno',
     'proyectos.borrar_rol_interno',
+    'proyectos.importar_tipo_HU',
+    'proyectos.modificar_columnas_tipo_HU',
 ]
 
 export const nombresPermisosInternos = [
@@ -29,6 +32,7 @@ export const nombresPermisosInternos = [
     'Iniciar proyecto',
     'Crear tipo historia de usuario',
     'Borrar tipo historia de usuario',
+    'Actualizar tipo historia de usuario',
     'Importar roles internos',
     'Agregar participante',
     'Modificar participante',
@@ -38,4 +42,7 @@ export const nombresPermisosInternos = [
     'Crear rol interno',
     'Actualizar rol interno',
     'Borrar rol interno',
+    'Importar tipo HU',
+    'Modificar columnas tipo HU'
+
 ]

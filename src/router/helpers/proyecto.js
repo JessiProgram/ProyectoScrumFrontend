@@ -47,7 +47,15 @@ const rutas = [
         meta: {
             middleware: autenticado
         },
-        component: () => import('@/views/proyecto/_idProyecto/tipo-historias-usuarios.vue')
+        component: () => import('@/views/proyecto/_idProyecto/tipo-historias-usuarios/tipo-historias-usuarios.vue')
+    },
+    {
+        path: '/proyecto/:idProyecto/tipo-historias-usuarios/:idTipoHU', 
+        name: 'tipoHistoriasUsuario',
+        meta: {
+            middleware: autenticado
+        },
+        component: () => import('@/views/proyecto/_idProyecto/tipo-historias-usuarios/_id-tipo-historias-usuarios.vue')
     },
 ]
 
