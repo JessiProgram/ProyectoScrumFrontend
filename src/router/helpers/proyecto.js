@@ -1,4 +1,6 @@
+import esParticipante from "@/middlewares/esParticipante"
 import autenticado from "../../middlewares/autenticado"
+
 
 const rutas = [
     {
@@ -13,7 +15,7 @@ const rutas = [
         path: '/proyecto/:idProyecto', 
         name: 'proyecto',
         meta: {
-            middleware: autenticado
+            middleware: esParticipante, 
         },
         component: () => import('@/views/proyecto/_idProyecto.vue')
     },
@@ -21,7 +23,7 @@ const rutas = [
         path: '/proyecto/:idProyecto/configuracion', 
         name: 'configuracion',
         meta: {
-            middleware: autenticado
+            middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/configuracion.vue')
     },
@@ -29,7 +31,7 @@ const rutas = [
         path: '/proyecto/:idProyecto/participantes', 
         name: 'participantes',
         meta: {
-            middleware: autenticado
+            middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/participantes.vue')
     },
@@ -37,15 +39,23 @@ const rutas = [
         path: '/proyecto/:idProyecto/roles-internos', 
         name: 'rolesInternos',
         meta: {
-            middleware: autenticado
+            middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/roles-internos.vue')
+    },
+    {
+        path: '/proyecto/:idProyecto/product-backlog', 
+        name: 'productBacklog',
+        meta: {
+            middleware: esParticipante
+        },
+        component: () => import('@/views/proyecto/_idProyecto/product-backlog.vue')
     },
     {
         path: '/proyecto/:idProyecto/tipo-historias-usuarios', 
         name: 'tipoHistoriasUsuario',
         meta: {
-            middleware: autenticado
+            middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/tipo-historias-usuarios/tipo-historias-usuarios.vue')
     },
@@ -53,7 +63,7 @@ const rutas = [
         path: '/proyecto/:idProyecto/tipo-historias-usuarios/:idTipoHU', 
         name: 'tipoHistoriasUsuario',
         meta: {
-            middleware: autenticado
+            middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/tipo-historias-usuarios/_id-tipo-historias-usuarios.vue')
     },

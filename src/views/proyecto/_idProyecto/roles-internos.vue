@@ -55,7 +55,7 @@
                         >
                         </v-avatar>
                         <p class="ml-3">
-                            {{ item.nombre }}
+                            {{ item.uid }} - {{ item.nombre }}
                         </p>
                     </v-card-title>
                 </v-img>
@@ -445,7 +445,6 @@
         openDialogVerRol (data) {
             this.dialog = true
             this.rolSeleccionado = data
-
             this.datosActualizadosRol.nombre = this.rolSeleccionado.nombre
             this.datosActualizadosRol.descripcion = this.rolSeleccionado.descripcion
         },

@@ -26,6 +26,11 @@
                 Tipos Historias de Usuario
             </v-btn>
             <v-btn v-if="$store.getters['usuario/estaAutenticado']" class="blue--text mr-2 mb-2" outlined 
+            v-on:click="$router.push(`/proyecto/${idProyecto}/product-backlog`)"
+            >
+                Product Backlog
+            </v-btn>
+            <v-btn v-if="$store.getters['usuario/estaAutenticado']" class="blue--text mr-2 mb-2" outlined 
             v-on:click="$router.push(`/proyecto/${idProyecto}/configuracion`)">
                 Configurar el Proyecto
             </v-btn>

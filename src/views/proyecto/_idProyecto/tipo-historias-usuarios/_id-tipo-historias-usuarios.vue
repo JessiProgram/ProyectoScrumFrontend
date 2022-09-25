@@ -1,21 +1,31 @@
 <template>
     <LayoutDefault>
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
         <v-container>
             <h3>Tipo Historia de Usuario</h3>
             <div v-if="tipoHU">
                 <v-text-field v-model="nombreTipoHU" label="Nombre Tipo Historia Usuario"></v-text-field>
-                <v-btn outlined :disabled="!nombreTipoHU || nombreTipoHU === tipoHU.fields.nombre" @click="actualizarTipoHU()" @loading="creando" color="indigo" class="mb-5">
-                    Actualizar Nombre
-                </v-btn>
+                <div class="container text-right">
+                    <v-btn outlined :disabled="!nombreTipoHU || nombreTipoHU === tipoHU.fields.nombre" @click="actualizarTipoHU()" @loading="creando" color="indigo" class="mb-5">
+                        Actualizar Nombre
+                    </v-btn>
+                </div>
             </div>
 
 
             <h3>Columnas</h3>
             <v-text-field v-model="nombre" label="Nombre Nueva Columna" required></v-text-field>
-
-            <v-btn outlined :disabled="!nombre || (columnaSeleccionada && columnaSeleccionada.fields.nombre === nombre)" @click="crear()" @loading="creando" color="indigo">
-                <div v-if="!esActualizar">Agregar columna</div><div v-else>Actualizar columna</div>
-            </v-btn>
+            <div class="container text-right">
+                <v-btn outlined :disabled="!nombre || (columnaSeleccionada && columnaSeleccionada.fields.nombre === nombre)" @click="crear()" @loading="creando" color="indigo">
+                    <div v-if="!esActualizar">Agregar columna</div><div v-else>Actualizar columna</div>
+                </v-btn>
+            </div>
             <v-btn v-if="esActualizar" outlined @click="limparSeleccion()" color="red" class="ml-3">
                 Cancelar
             </v-btn>
@@ -148,6 +158,34 @@ export default {
             esActualizar: false,
 
             deshabilitarCambio: false,
+
+            items: [
+                {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Proyectos',
+                    disabled: false,
+                    href: '/proyectos',
+                },
+                {
+                    text: `Proyecto ${this.$route.params.idProyecto}`,
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}`,
+                },
+                {
+                    text: 'Tipo Historia de Usuario',
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}/tipo-historias-usuarios`,
+                },
+                {
+                    text: 'Editar',
+                    disabled: true,
+                    href: `/proyecto/${this.$route.params.idProyecto}/tipo-historias-usuarios/${this.$route.params.idTipoHU}`,
+                },
+            ],
         }
     },
 

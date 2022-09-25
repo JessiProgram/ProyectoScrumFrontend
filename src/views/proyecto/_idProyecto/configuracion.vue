@@ -1,6 +1,12 @@
 <template>
     <LayoutDefault>
-
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
         <v-container>
             <h3>Configuración del proyecto</h3>
 

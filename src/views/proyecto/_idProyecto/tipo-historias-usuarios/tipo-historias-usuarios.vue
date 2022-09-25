@@ -1,18 +1,29 @@
 <template>
     <LayoutDefault>
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
         <v-container>
             <h3>Tipo Historias de Usuario</h3>
 
             <v-text-field v-model="nombre" label="Nombre Tipo Historia Usuario" required></v-text-field>
 
-            <v-btn outlined :disabled="!nombre" @click="crear()" @loading="creando" color="indigo">
-                Crear Tipo Historia Usuario
-            </v-btn>
-
+            <div class="container text-right">
+                <v-btn outlined :disabled="!nombre" @click="crear()" @loading="creando" color="indigo">
+                    Crear Tipo Historia Usuario
+                </v-btn>
+            </div>
 
             <v-simple-table>
                 <thead>
                     <tr>
+                        <th class="text-left">
+                            ID
+                        </th>
                         <th class="text-left">
                             Nombre
                         </th>
@@ -26,6 +37,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="tipoHU in listaTiposHU" :key="tipoHU.pk">
+                        <td>{{ tipoHU.pk }}</td>
                         <td>{{ tipoHU.fields.nombre }}</td>
                         <td>{{ new Date(tipoHU.fields.fechaCreacion).toLocaleString() }}</td>
                         <td>
@@ -44,8 +56,8 @@
                     </tr>
                 </tbody>
             </v-simple-table>
-            <h4 class="mt-3">Buscar e importar Tipo de Historia de Usuario de otros proyectos</h4>
-            <v-btn outlined @click="openDialogImportar()" color="indigo">
+            <h4 class="mt-7">Buscar e importar Tipo de Historia de Usuario de otros proyectos</h4>
+            <v-btn outlined @click="openDialogImportar()" color="indigo" class="mt-4 mb-5">
                 Buscar e Importar
             </v-btn>
         </v-container>
@@ -190,7 +202,29 @@ export default {
             listaTiposHUImportar: [],
             importando: false,
 
-            columnas: []
+            columnas: [],
+            items: [
+                {
+                    text: 'Inicio',
+                    disabled: false,
+                    href: '/inicio',
+                },
+                {
+                    text: 'Proyectos',
+                    disabled: false,
+                    href: '/proyectos',
+                },
+                {
+                    text: `Proyecto ${this.$route.params.idProyecto}`,
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}`,
+                },
+                {
+                    text: 'Tipo Historia de Usuario',
+                    disabled: true,
+                    href: `/proyecto/${this.$route.params.idProyecto}/tipo-historias-usuarios`,
+                },
+            ],
         }
     },
 

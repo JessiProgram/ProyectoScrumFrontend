@@ -188,7 +188,7 @@
                     <v-checkbox
                         v-for="(item, index) in rolesInternos" :key="index"
                         v-model="rolesInternosDeParticipante[index]"
-                        :label="`${item.nombre}`"
+                        :label="`${item.uid} - ${item.nombre}`"
                     ></v-checkbox>
 
                     <v-btn
@@ -320,7 +320,7 @@ export default {
                 {
                     text: 'Participantes',
                     disabled: true,
-                    href: '/participantes',
+                    href: `/proyecto/${this.$route.params.idProyecto}/participantes`,
                 },
             ],
         }
@@ -517,13 +517,6 @@ export default {
         dialogActualizarParticipante: function () {
             if (this.dialogActualizarParticipante) {
                 
-
-
-
-
-
-
-
                 
                 return
             }
