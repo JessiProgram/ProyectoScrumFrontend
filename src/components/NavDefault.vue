@@ -7,6 +7,7 @@
         height="50"
         dark
     >
+    
         <template v-slot:img="{ props }">
             <v-img
             v-bind="props"
@@ -15,14 +16,52 @@
         </template>
 
         <div class="ml-4">
-            <h3 class="title">Login With Google</h3>
+            <h3 class="title">
+                ScrumLAB
+            </h3>
         </div>
+
+        <v-spacer></v-spacer>
+
+        <v-btn
+            v-if="$store.getters['usuario/esAdministrador']"
+            to="/administracion"
+            class="mr-2"
+            outlined
+            color="white"
+        >
+            Administración
+        </v-btn>
+        
+        <v-btn
+            class="mr-2"
+            outlined
+            color="white"
+            to="/proyectos"
+        >
+            Proyectos
+        </v-btn>
+
+        <v-btn
+            @click="logout"
+            class="mr-2"
+            outlined
+            color="white"
+        >
+            Cerrar sesión
+        </v-btn>
+
     </v-app-bar>
 </template>
 
 <script>
 export default {
-
+    methods: {
+        async logout() {
+            await this.$store.dispatch('usuario/logout')
+            this.$router.push('/')
+        }
+    }
 }
 </script>
 

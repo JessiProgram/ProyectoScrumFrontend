@@ -4,7 +4,7 @@
         absolute
         color="#683bce"
         src="@/assets/images/laptop.png"
-        height="80"
+        height="50"
         dark
     >
         <template v-slot:img="{ props }">
@@ -18,20 +18,27 @@
             <h3 class="title">
                 ScrumLAB
             </h3>
-
-            
         </div>
 
-        <v-spacer />
-    
-        <v-btn 
-            v-if="$store.getters['usuario/estaAutenticado']" 
-            class="white--text"
-            outlined 
+        <v-spacer></v-spacer>
+
+        <v-btn
             to="/inicio"
+            class="mr-2"
+            outlined
+            color="white"
         >
-            Comenzar
+            Volver
         </v-btn>
+
+        <v-btn
+            class="mr-2"
+            outlined
+            color="white"
+        >
+            Cerrar sesión
+        </v-btn>
+
     </v-app-bar>
 </template>
 

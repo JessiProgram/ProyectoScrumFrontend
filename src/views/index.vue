@@ -83,6 +83,7 @@ export default {
     LayoutGuest,
   },
   methods: {
+
     getColorTitulo (item) {
       if (item.type === 1) {
         return 'color: #3e42f4;'
