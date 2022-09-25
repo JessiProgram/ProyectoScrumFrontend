@@ -106,7 +106,7 @@ export default {
              * Crea el usuario y retorna el mismo si no existe,
              * Retorna el usuario si existe.
              */
-            const response1 = await axios.post('/usuario', body, config)
+            const response1 = await axios.post('/usuario/', body, config)
             const datosUsuarioModelo = response1.data[0].fields
 
             
@@ -126,7 +126,7 @@ export default {
             for (let i = 0; i < roles.length; i++) {
                 const idGrupo = roles[i];
                 // Llamamos al backend
-                const resPermisos = await axios.get(`/rol?id=${idGrupo}`, config)
+                const resPermisos = await axios.get(`/rol/?id=${idGrupo}&tipo=Externo`, config)
                 const permisosModelo = resPermisos.data
 
                 for (let j = 1; j < permisosModelo.length; j++) {

@@ -24,6 +24,20 @@
                 Crear un rol
             </v-btn>
 
+            <v-btn
+                text
+                outlined
+                large
+                color="blue"
+                class="mb-10 ml-5"
+                @click="dialogImportar = true"
+            >
+                <v-icon left>
+                    mdi-plus
+                </v-icon>
+                Importar Roles
+            </v-btn>
+
             <v-card 
                 v-for="item in listaRoles" :key="item.uid" 
                 class="mx-auto mb-7"
@@ -41,7 +55,7 @@
                         >
                         </v-avatar>
                         <p class="ml-3">
-                            {{ item.nombre }}
+                            {{ item.uid }} - {{ item.nombre }}
                         </p>
                     </v-card-title>
                 </v-img>
@@ -300,6 +314,59 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <!-- dialog de importar-->
+        <v-dialog
+            v-model="dialogImportar"
+            max-width="800px"
+        >
+            <v-card>
+                <v-card-title class="informacionAccion textoInformacionAccion">
+                    Importar todos los roles de un proyecto que participas
+                </v-card-title>
+
+                <v-container>
+                    <v-list two-line>
+                        <v-list-item-group
+                            multiple
+                        >
+                            <div v-for="(proyecto,i) of listaProyectos"
+                            :key="i"
+                            >
+                                <div v-if="Number(proyecto.pk) !== Number(idProyecto)">
+                                    <v-list-item :key="proyecto.fields.nombre">
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="proyecto.fields.nombre"></v-list-item-title>
+                                        </v-list-item-content>
+
+                                        <v-list-item-action>
+                                            <v-btn outlined :loading="importando" @click="importarRoles(proyecto)" color="indigo">
+                                                Importar
+                                            </v-btn>
+                                        </v-list-item-action>
+                                    </v-list-item>
+
+                                    <v-divider
+                                        v-if="i < listaProyectos.length - 1"
+                                        :key="i"
+                                    ></v-divider>
+                                </div>
+                            </div>
+                        </v-list-item-group>
+                    </v-list>
+                    <v-card-actions class="d-flex flex-row-reverse pb-5 pt-5">
+                        <v-btn
+                            color="grey darken-2"
+                            text
+                            @click="dialogImportar = false"
+                        >
+                            Cerrar
+                        </v-btn>
+                    </v-card-actions>
+                </v-container>
+            </v-card>
+        </v-dialog>
+
     </LayoutDefault>
   </template>
   
@@ -341,6 +408,10 @@
                 message: '',
             },
 
+            dialogImportar: false,
+            importando: false,
+            listaProyectos: [],
+
             items: [
             {
                     text: 'Inicio',
@@ -374,7 +445,6 @@
         openDialogVerRol (data) {
             this.dialog = true
             this.rolSeleccionado = data
-
             this.datosActualizadosRol.nombre = this.rolSeleccionado.nombre
             this.datosActualizadosRol.descripcion = this.rolSeleccionado.descripcion
         },
@@ -383,6 +453,7 @@
             this.datosRolEliminacion = data
             this.confirmacionEliminacionRol = ''
         },
+
         async eliminarRol () {
             const uidRolEliminacion = this.datosRolEliminacion.uid
             this.dialogEliminacion = false
@@ -402,7 +473,7 @@
                     }
                 }
 
-                await this.axios.delete(`/rol?id=${uidRolEliminacion}&tipoRol=Interno`, config)
+                await this.axios.delete(`/rol/?id=${uidRolEliminacion}&tipoRol=Interno`, config)
 
                 const indexDelete = this.listaRoles.indexOf(v => v.uid === uidRolEliminacion)
                 this.listaRoles.splice(indexDelete, 1)
@@ -449,7 +520,7 @@
                     permisos: permisos
                 }
 
-                const response = await this.axios.post(`/rol`, body, config)
+                const response = await this.axios.post(`/rol/`, body, config)
 
                 this.listaRoles.push({
                     uid: response.data[0].pk,
@@ -494,7 +565,7 @@
                     permisos: []
                 }
                 
-                await this.axios.put(`/rol`, body1, config)
+                await this.axios.put(`/rol/`, body1, config)
 
                 this.rolSeleccionado.nombre = this.datosActualizadosRol.nombre
                 this.rolSeleccionado.descripcion = this.datosActualizadosRol.descripcion
@@ -553,7 +624,7 @@
                     permisos: idsPermisoDelete
                 }
                 
-                await this.axios.put(`/rol`, body2, config)
+                await this.axios.put(`/rol/`, body2, config)
 
                 // Agregar roles
                 const body1 = {
@@ -566,7 +637,7 @@
                     permisos: idsPermisoAdd
                 }
                 
-                await this.axios.put(`/rol`, body1, config)
+                await this.axios.put(`/rol/`, body1, config)
                     
             } catch (error) {
                 console.log('error', error)
@@ -589,6 +660,28 @@
             }
 
             return listaPermisosSeleccionadosAux
+        },
+        async importarRoles( proyecto ){
+
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+
+            const body = {
+                idProyectoActual: this.idProyecto,
+                idProyectoExterno: proyecto.pk,
+            }
+
+            const response = await this.axios.post(`/proyecto/importar_roles`, body, config)
+
+
+
+            alert("Roles importados")
         }
     },
     watch: {
@@ -604,7 +697,7 @@
                 }
             }
             
-            const response = await this.axios.get(`/rol?id=${this.rolSeleccionado.uid}`, config)
+            const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}&tipo=Interno`, config)
             this.permisosDelRol = response.data
             .filter(v => v.model !== 'roles.rol')
             .map(v => {
@@ -643,6 +736,26 @@
             this.datosRolEliminacion = null
             this.confirmacionEliminacionRol = ''
         },
+        dialogImportar: async function () {
+            if (!this.dialogImportar) return 
+
+            // traermos todos los proyectos
+            // buscamos todos proyectos del usuario
+            let idToken = this.$store.state.usuario.idToken
+            // llamamos al backend y solicitamos lo proyectos del usuario
+            // Llamamos al backend
+            let config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+
+            let res = await this.axios.get('/usuario/proyectos', config)
+
+            this.listaProyectos = res.data
+        },
+
     },
     async created () {
         const idToken = this.$store.state.usuario.idToken

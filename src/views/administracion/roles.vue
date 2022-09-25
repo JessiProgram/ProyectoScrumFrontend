@@ -393,7 +393,7 @@
                     }
                 }
 
-                await this.axios.delete(`/rol?id=${uidRolEliminacion}&tipoRol=Externo`, config)
+                await this.axios.delete(`/rol/?id=${uidRolEliminacion}&tipoRol=Externo`, config)
 
                 const indexDelete = this.listaRoles.indexOf(v => v.uid === uidRolEliminacion)
                 this.listaRoles.splice(indexDelete, 1)
@@ -439,7 +439,7 @@
                     permisos: permisos
                 }
 
-                const response = await this.axios.post(`/rol`, body, config)
+                const response = await this.axios.post(`/rol/`, body, config)
 
                 this.listaRoles.push({
                     uid: response.data[0].pk,
@@ -591,7 +591,7 @@
                 }
             }
             
-            const response = await this.axios.get(`/rol?id=${this.rolSeleccionado.uid}`, config)
+            const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}`, config)
             this.permisosDelRol = response.data
             .filter(v => v.model !== 'roles.rol')
             .map(v => {

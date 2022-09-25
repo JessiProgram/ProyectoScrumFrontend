@@ -98,7 +98,7 @@
                 scrumMaster: this.scrumMaster
             }
 
-            const response = await this.axios.post(`/proyecto`, body, config)
+            const response = await this.axios.post(`/proyecto/`, body, config)
             alert("Proyecto creado")
             this.nombre = ''
             this.descripcion = ''

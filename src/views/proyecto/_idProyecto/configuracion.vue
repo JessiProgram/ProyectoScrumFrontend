@@ -1,6 +1,12 @@
 <template>
     <LayoutDefault>
-
+        <div class="container">
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon>mdi-forward</v-icon>
+                </template>
+            </v-breadcrumbs>
+        </div>
         <v-container>
             <h3>Configuración del proyecto</h3>
 
@@ -115,7 +121,7 @@ export default {
             }
         }
 
-        let res = await axios.get(`proyecto?q=${this.idProyecto}`, config)
+        let res = await axios.get(`proyecto/?q=${this.idProyecto}`, config)
 
         let proyecto = res.data[0]
 
@@ -149,7 +155,7 @@ export default {
                     descripcion:this.descripcion
                 }
                 
-                await this.axios.put(`/proyecto`, body1, config)
+                await this.axios.put(`/proyecto/`, body1, config)
 
                 alert("Proyecto Actualizado")
         }

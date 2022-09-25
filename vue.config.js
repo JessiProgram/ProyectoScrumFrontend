@@ -1,3 +1,4 @@
+const path = require('path');
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: [
@@ -5,3 +6,4 @@ module.exports = defineConfig({
     'vuex-persist',
   ],
 })
+
