@@ -11,7 +11,7 @@
         <div class="container">
             <v-card 
                 v-for="item in listaUsuarios" :key="item.uid" 
-                class="mx-auto"
+                class="mx-auto mb-7"
                 width="600"
             >
                 <v-img
