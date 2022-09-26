@@ -483,7 +483,7 @@
                     permisos: []
                 }
                 
-                await this.axios.put(`/rol`, body1, config)
+                await this.axios.put(`/rol/`, body1, config)
 
                 this.rolSeleccionado.nombre = this.datosActualizadosRol.nombre
                 this.rolSeleccionado.descripcion = this.datosActualizadosRol.descripcion
@@ -541,7 +541,7 @@
                     permisos: idsPermisoDelete
                 }
                 
-                await this.axios.put(`/rol`, body2, config)
+                await this.axios.put(`/rol/`, body2, config)
 
                 // Agregar roles
                 const body1 = {
@@ -553,7 +553,7 @@
                     permisos: idsPermisoAdd
                 }
                 
-                await this.axios.put(`/rol`, body1, config)
+                await this.axios.put(`/rol/`, body1, config)
                     
             } catch (error) {
                 console.log('error', error)

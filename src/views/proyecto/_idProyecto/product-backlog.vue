@@ -469,8 +469,10 @@ export default {
                 prioridad_negocio: this.datosNuevaHistoria.prioridad_negocio,
                 estimacion_horas: this.datosNuevaHistoria.estimacion_horas,
                 idTipo: this.listaTiposHU[indexTipo].pk,
-                idParticipante: this.listaParticipantes[indexParticipante].pk,
+                idParticipante: this.listaParticipantesID[indexParticipante].pk,
             }
+
+            console.log("body",body)
 
             const response = await this.axios.post(`/historiasUsuario/`, body, config)
 
