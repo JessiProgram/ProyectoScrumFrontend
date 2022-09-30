@@ -9,34 +9,45 @@
         </div>
 
         <v-container>
-            <h3>LISTA DE MIS PROYECTOS</h3> 
+            <h3 class="text-center mb-7">LISTA DE MIS PROYECTOS</h3> 
 
-            <div v-for="(proyecto, index) of listaProyectos" :key="index">
-                <v-card class="mx-auto mb-4" max-width="344" outlined>
-                    <v-list-item three-line>
-                        <v-list-item-content>
-                            <div class="text-overline mb-4">
-                                Proyecto Scrum
-                            </div>
-                            <v-list-item-title class="text-h5 mb-1">
+                <v-card 
+                    v-for="(proyecto, index) of listaProyectos" :key="index" 
+                    class="mx-auto mb-7"
+                    width="600"
+                >
+                    <v-img
+                        height="120px"
+                        :src="`https://source.unsplash.com/random/1440x900?sig=${index}`"
+                    >
+                        <v-card-title class="white--text mt-8">
+                            <v-avatar size="56">
+                            <img
+                                alt="user"
+                                :src="`https://robohash.org/${index}?set=set4`"
+                            >
+                            </v-avatar>
+                        
+                            <h4 class="ml-3" style="text-shadow: 3px 2px #000000;">
                                 {{proyecto.fields.nombre}}
-                            </v-list-item-title>
-                            <v-list-item-subtitle>{{proyecto.fields.descripcion}}</v-list-item-subtitle>
-                        </v-list-item-content>
-                        <v-list-item-avatar tile size="80" color="grey">
-                            <v-img
-                            :src="`https://source.unsplash.com/random/900x900?sig=${Math.random()*100}`"
-                            ></v-img>
-                        </v-list-item-avatar>
-                    </v-list-item>
+                            </h4>
+                        </v-card-title>
+                    </v-img>
 
-                    <v-card-actions>
-                        <v-btn outlined rounded text v-on:click="irAProyecto(proyecto.pk)">
-                            Ir al proyecto
-                        </v-btn>
-                    </v-card-actions>
+                    <v-card-text class="text-center">
+                        <div class="">
+                            <v-btn
+                                @click="irAProyecto(proyecto.pk)"
+                                color="green"
+                                text
+                                outlined
+                                class="mr-2"
+                            >
+                                Ir al Proyecto
+                            </v-btn>
+                        </div>
+                    </v-card-text>
                 </v-card>
-            </div>
         </v-container>
     </LayoutDefault>
 </template>

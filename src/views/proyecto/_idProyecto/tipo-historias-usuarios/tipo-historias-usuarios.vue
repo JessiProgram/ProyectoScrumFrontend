@@ -141,14 +141,19 @@
                                                 <v-list-item :key="tipoHU.fields.nombre">
                                                     <v-list-item-content>
                                                         <v-list-item-title v-text="tipoHU.fields.nombre"></v-list-item-title>
+                                                        <ul>
+                                                            <li v-for="(columna, indexColum) in tipoHU.columnas">
+                                                                {{columna.fields.nombre}}
+                                                            </li>
+                                                        </ul>
                                                     </v-list-item-content>
-
                                                     <v-list-item-action>
                                                         <v-btn outlined :loading="importando" @click="importarTiposHU(proyecto, tipoHU)" color="indigo">
                                                             Importar
                                                         </v-btn>
                                                     </v-list-item-action>
                                                 </v-list-item>
+                                                
 
                                                 <v-divider
                                                     v-if="index < listaTiposHUImportar.length - 1"
@@ -249,10 +254,14 @@ export default {
                 }
             }
 
-            let res = await axios.get(`/tipoHistoriaUsuario/?idproyecto=${this.idProyecto}`, config)
+            try {
+                let res = await axios.get(`/tipoHistoriaUsuario/?idproyecto=${this.idProyecto}`, config)
 
-            console.log("res.data", res.data)
-            this.listaTiposHU = res.data
+                console.log("res.data", res.data)
+                this.listaTiposHU = res.data
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         async crear() {
@@ -271,11 +280,14 @@ export default {
                 id_proyecto: this.idProyecto,
                 columnas: ['Todo', 'Doing', 'Done']
             }
+            try {
+                const response = await this.axios.post(`/tipoHistoriaUsuario/`, body, config)
+                this.inicializarLista()
 
-            const response = await this.axios.post(`/tipoHistoriaUsuario/`, body, config)
-            this.inicializarLista()
-
-            this.creando = false
+                this.creando = false
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         async eliminar () {
@@ -297,6 +309,7 @@ export default {
                 this.inicializarLista()
 
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -335,12 +348,13 @@ export default {
                     Authorization: `Bearer ${idToken}` 
                 }
             }
+            try {
+                let res = await axios.get('/proyectos/', config)
 
-            let res = await axios.get('/usuario/proyectos', config)
-
-            this.listaProyectos = res.data
-
-
+                this.listaProyectos = res.data
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         async buscarTiposHU(proyecto){
@@ -354,11 +368,32 @@ export default {
                 }
             }
 
-            let res = await axios.get(`/tipoHistoriaUsuario/?idproyecto=${proyecto.pk}`, config)
+            try {
+                let res = await axios.get(`/tipoHistoriaUsuario/?idproyecto=${proyecto.pk}`, config)
 
-            console.log("res.data", res.data)
-            this.listaTiposHUImportar = res.data
+                this.listaTiposHUImportar = res.data
+                console.log('this.listaTiposHUImportar ++ ',this.listaTiposHUImportar)
 
+                // buscamos las columnas de cada tipoHU
+                const listaTiposHUImportarAux = []
+                for (let i = 0; i < this.listaTiposHUImportar.length; i++) {
+                    const elemento = this.listaTiposHUImportar[i]
+                    let resColum = await axios.get(`/tipoHistoriaUsuario/tipoHU?idproyecto=${this.idProyecto}&id=${this.listaTiposHUImportar[i].pk}`, config)
+                    let columnas = []
+                    for (let i = 1; i < resColum.data.length; i++) {
+                        const columna = resColum.data[i];
+                        columnas.push(columna)
+                    }
+                    columnas.sort((a,b) => a.fields.orden - b.fields.orden);
+                    elemento.columnas = columnas.map((x) => x)
+                    listaTiposHUImportarAux.push(elemento)
+                }
+                this.listaTiposHUImportar = listaTiposHUImportarAux
+
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                console.log(error)
+            }
         },
 
         async importarTiposHU(proyecto, tipoHU){
@@ -377,13 +412,15 @@ export default {
                 id_tipo_HU: tipoHU.pk,
                 id_proyecto: this.idProyecto,
             }
-
-            const response = await this.axios.put(`/tipoHistoriaUsuario/`, body, config)
-
-            this.importando = false
-            alert("Tipo de Historia de Usuario Importado")
-            this.inicializarLista()
-
+            try {
+                const response = await this.axios.put(`/tipoHistoriaUsuario/`, body, config)
+                this.importando = false
+                alert("Tipo de Historia de Usuario Importado")
+                this.inicializarLista()
+            } catch (error) {
+                this.importando = false
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
 

@@ -74,6 +74,7 @@
 
                         <v-btn
                             @click="openDialogEliminarRol(item)"
+                            :disabled="sePuedeEliminar()"
                             color="red"
                             text
                             outlined
@@ -322,38 +323,48 @@
         >
             <v-card>
                 <v-card-title class="informacionAccion textoInformacionAccion">
-                    Importar todos los roles de un proyecto que participas
+                    Importar roles de un proyecto del sistema
                 </v-card-title>
 
                 <v-container>
-                    <v-list two-line>
-                        <v-list-item-group
-                            multiple
+                    <v-expansion-panels>
+                        <v-expansion-panel
+                        v-for="(proyecto,i) of listaProyectos"
+                        :key="i"
                         >
-                            <div v-for="(proyecto,i) of listaProyectos"
-                            :key="i"
-                            >
-                                <div v-if="Number(proyecto.pk) !== Number(idProyecto)">
-                                    <v-list-item :key="proyecto.fields.nombre">
-                                        <v-list-item-content>
-                                            <v-list-item-title v-text="proyecto.fields.nombre"></v-list-item-title>
-                                        </v-list-item-content>
+                            <div v-if="Number(proyecto.pk) !== Number(idProyecto)">
+                                <v-expansion-panel-header @click="buscarRoles(proyecto)">
+                                <h4>{{proyecto.fields.nombre}}</h4>
+                                </v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                    <v-list two-line>
+                                        <v-list-item-group
+                                            multiple
+                                        >
+                                            <div v-for="(rol, index) in listaRolesInternos">
+                                                <v-list-item :key="rol.fields.nombre">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title v-text="rol.fields.nombre"></v-list-item-title>
+                                                    </v-list-item-content>
 
-                                        <v-list-item-action>
-                                            <v-btn outlined :loading="importando" @click="importarRoles(proyecto)" color="indigo">
-                                                Importar
-                                            </v-btn>
-                                        </v-list-item-action>
-                                    </v-list-item>
+                                                    <v-list-item-action>
+                                                        <v-btn outlined :loading="importando" @click="importarRoles(rol)" color="indigo">
+                                                            Importar
+                                                        </v-btn>
+                                                    </v-list-item-action>
+                                                </v-list-item>
 
-                                    <v-divider
-                                        v-if="i < listaProyectos.length - 1"
-                                        :key="i"
-                                    ></v-divider>
-                                </div>
+                                                <v-divider
+                                                    v-if="index < listaRolesInternos.length - 1"
+                                                    :key="index"
+                                                ></v-divider>
+                                            </div>
+                                        </v-list-item-group>
+                                    </v-list>
+                                </v-expansion-panel-content>
                             </div>
-                        </v-list-item-group>
-                    </v-list>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
                     <v-card-actions class="d-flex flex-row-reverse pb-5 pt-5">
                         <v-btn
                             color="grey darken-2"
@@ -411,6 +422,7 @@
             dialogImportar: false,
             importando: false,
             listaProyectos: [],
+            listaRolesInternos: [],
 
             items: [
             {
@@ -481,6 +493,7 @@
                 this.dialogEliminacion = false
 
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -519,9 +532,7 @@
                     tipo: 'Interno',
                     permisos: permisos
                 }
-
-                const response = await this.axios.post(`/rol/`, body, config)
-
+                
                 this.listaRoles.push({
                     uid: response.data[0].pk,
                     ...response.data[0].fields,
@@ -530,6 +541,7 @@
                 this.dialogCreacion = false
 
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -571,6 +583,7 @@
                 this.rolSeleccionado.descripcion = this.datosActualizadosRol.descripcion
             
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -640,6 +653,7 @@
                 await this.axios.put(`/rol/`, body1, config)
                     
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -661,7 +675,25 @@
 
             return listaPermisosSeleccionadosAux
         },
-        async importarRoles( proyecto ){
+        async buscarRoles(proyecto){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+            try {
+                const response = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${proyecto.pk}&obtener=Todos`, config)
+
+                this.listaRolesInternos = response.data
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+        },
+
+        async importarRoles( rol ){
 
             const idToken = this.$store.state.usuario.idToken
 
@@ -674,14 +706,66 @@
 
             const body = {
                 idProyectoActual: this.idProyecto,
-                idProyectoExterno: proyecto.pk,
+                idRol: rol.pk,
+            }
+            try {
+                const response = await this.axios.post(`/proyecto/importar_roles`, body, config)
+
+                this.dialogImportar = false
+                alert("Roles importados")
+                this.inicializar()
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+ 
+        },
+        async inicializar(){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+            try {
+                // Listar roles internos
+                const response = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${this.idProyecto}`, config)
+                const listaResponse = response.data
+
+                this.listaRoles = listaResponse
+                .map(v => {
+                    const model = {
+                        uid: v.pk,
+                        ...v.fields,
+                    }
+
+                    return model
+                })
+
+                // Listar todos los permisos
+                this.codigosPermisosInternos = codigosPermisosInternos
+                this.nombresPermisosInternos = nombresPermisosInternos
+
+                const listaPermisosSeleccionadosAux = Array.from({
+                    length: this.codigosPermisosInternos.length
+                }, (v, i) => false)
+
+                this.datosRolNuevo = {
+                    nombre: '',
+                    descripcion: '',
+                    listaPermisosSeleccionados: listaPermisosSeleccionadosAux,
+                }
+                
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
             }
 
-            const response = await this.axios.post(`/proyecto/importar_roles`, body, config)
-
-
-
-            alert("Roles importados")
+            
+        },
+        sePuedeEliminar(){
+            if(this.listaRoles <= 1) return true
+            return false
         }
     },
     watch: {
@@ -696,18 +780,22 @@
                     Authorization: `Bearer ${idToken}` 
                 }
             }
-            
-            const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}&tipo=Interno`, config)
-            this.permisosDelRol = response.data
-            .filter(v => v.model !== 'roles.rol')
-            .map(v => {
-                return {
-                    uid: v.pk,
-                    ...v.fields,
-                }
-            })
 
-            this.listaPermisosSeleccionados = this.getListaPermisosSeleccionados()
+            try {
+                const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}&tipo=Interno`, config)
+                this.permisosDelRol = response.data
+                .filter(v => v.model !== 'roles.rol')
+                .map(v => {
+                    return {
+                        uid: v.pk,
+                        ...v.fields,
+                    }
+                })
+                this.listaPermisosSeleccionados = this.getListaPermisosSeleccionados()
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+            
         },
         dialog: function () {
             if (this.dialog) return 
@@ -750,50 +838,23 @@
                     Authorization: `Bearer ${idToken}` 
                 }
             }
+            try {
 
-            let res = await this.axios.get('/usuario/proyectos', config)
+                let res = await this.axios.get('/proyectos/', config)
 
-            this.listaProyectos = res.data
+                this.listaProyectos = res.data
+                
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+
+            
         },
+        
 
     },
     async created () {
-        const idToken = this.$store.state.usuario.idToken
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${idToken}` 
-            }
-        }
-
-        // Listar roles internos
-        const response = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${this.idProyecto}`, config)
-        const listaResponse = response.data
-
-        this.listaRoles = listaResponse
-        .map(v => {
-            const model = {
-                uid: v.pk,
-                ...v.fields,
-            }
-
-            return model
-        })
-
-        // Listar todos los permisos
-        this.codigosPermisosInternos = codigosPermisosInternos
-        this.nombresPermisosInternos = nombresPermisosInternos
-
-        const listaPermisosSeleccionadosAux = Array.from({
-            length: this.codigosPermisosInternos.length
-        }, (v, i) => false)
-
-        this.datosRolNuevo = {
-            nombre: '',
-            descripcion: '',
-            listaPermisosSeleccionados: listaPermisosSeleccionadosAux,
-        }
+        await this.inicializar()
     }
   }
   </script>

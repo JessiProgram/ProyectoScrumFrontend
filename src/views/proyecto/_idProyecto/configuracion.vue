@@ -121,20 +121,20 @@ export default {
             }
         }
 
-        let res = await axios.get(`proyecto/?q=${this.idProyecto}`, config)
+        try {
+            let res = await axios.get(`proyecto/?q=${this.idProyecto}`, config)
 
-        let proyecto = res.data[0]
+            let proyecto = res.data[0]
 
-        this.nombre = proyecto.fields.nombre
-        this.descripcion = proyecto.fields.descripcion
-        this.fechaInicio = proyecto.fields.fechaInicio ? new Date(proyecto.fields.fechaInicio).toLocaleString() : null
-        this.fechaFin = proyecto.fields.fechaFin ? new Date(proyecto.fields.fechaFin).toLocaleString() : null
-        this.estado = proyecto.fields.estado
-        this.scrumMaster = proyecto.fields.scrumMaster
-
-        
-
-
+            this.nombre = proyecto.fields.nombre
+            this.descripcion = proyecto.fields.descripcion
+            this.fechaInicio = proyecto.fields.fechaInicio ? new Date(proyecto.fields.fechaInicio).toLocaleString() : null
+            this.fechaFin = proyecto.fields.fechaFin ? new Date(proyecto.fields.fechaFin).toLocaleString() : null
+            this.estado = proyecto.fields.estado
+            this.scrumMaster = proyecto.fields.scrumMaster 
+        } catch (error) {
+            alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+        }
 
     },
     methods:{
@@ -142,22 +142,26 @@ export default {
             
             const idToken = this.$store.state.usuario.idToken
 
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${idToken}` 
-                    }
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
                 }
-
-                const body1 = {
-                    id: this.idProyecto,
-                    nombre: this.nombre,
-                    descripcion:this.descripcion
-                }
-                
+            }
+            const body1 = {
+                id: this.idProyecto,
+                nombre: this.nombre,
+                descripcion:this.descripcion
+            }
+            
+            try {
                 await this.axios.put(`/proyecto/`, body1, config)
 
                 alert("Proyecto Actualizado")
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+                
         }
     }
     

@@ -25,12 +25,11 @@
                 <v-btn outlined :disabled="!nombre || (columnaSeleccionada && columnaSeleccionada.fields.nombre === nombre)" @click="crear()" @loading="creando" color="indigo">
                     <div v-if="!esActualizar">Agregar columna</div><div v-else>Actualizar columna</div>
                 </v-btn>
-            </div>
-            <v-btn v-if="esActualizar" outlined @click="limparSeleccion()" color="red" class="ml-3">
+                <v-btn v-if="esActualizar" outlined @click="limparSeleccion()" color="red" class="ml-3">
                 Cancelar
-            </v-btn>
-
-
+                </v-btn>
+            </div>
+            
             <v-simple-table>
                 <thead>
                     <tr>
@@ -64,13 +63,13 @@
                                     mdi-arrow-down-thick
                                 </v-icon>
                             </v-btn>
-                            <v-btn class="mr-3" fab dark x-small color="green"
+                            <v-btn class="mr-3" fab dark x-small color="green" 
                                 @click="openDialogActualizarTipoHU(columna)">
                                 <v-icon dark>
                                     mdi-pencil
                                 </v-icon>
                             </v-btn>
-                            <v-btn class="mr-3" fab dark x-small color="red" @click="openDialogEliminarTipoHU(columna)">
+                            <v-btn class="mr-3" fab dark x-small color="red" @click="openDialogEliminarTipoHU(columna)" :disabled="columnas.length <=3">
                                 <v-icon dark>
                                     mdi-delete
                                 </v-icon>
@@ -211,19 +210,21 @@ export default {
                     Authorization: `Bearer ${idToken}`
                 }
             }
+            try {
+                let res = await axios.get(`/tipoHistoriaUsuario/tipoHU?idproyecto=${this.idProyecto}&id=${this.idTipoHU}`, config)
 
-            let res = await axios.get(`/tipoHistoriaUsuario/tipoHU?idproyecto=${this.idProyecto}&id=${this.idTipoHU}`, config)
+                this.tipoHU = res.data[0]
+                this.nombreTipoHU = this.tipoHU.fields.nombre
 
-            console.log("res.data",res.data)
+                for (let i = 1; i < res.data.length; i++) {
+                    const columna = res.data[i];
+                    this.columnas.push(columna)
+                }
+                this.columnas.sort((a,b) => a.fields.orden - b.fields.orden);
 
-            this.tipoHU = res.data[0]
-            this.nombreTipoHU = this.tipoHU.fields.nombre
-
-            for (let i = 1; i < res.data.length; i++) {
-                const columna = res.data[i];
-                this.columnas.push(columna)
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
             }
-            this.columnas.sort((a,b) => a.fields.orden - b.fields.orden);
 
         },
 
@@ -246,11 +247,15 @@ export default {
                 nombre: this.nombreTipoHU,
 
             }
-            console.log('body',body)
-            const response = await this.axios.put(`/tipoHistoriaUsuario/tipoHU`, body, config)
 
-            this.tipoHU.fields.nombre = this.nombreTipoHU
-            alert("Se actualizó correctamente")
+            try {
+                const response = await this.axios.put(`/tipoHistoriaUsuario/tipoHU`, body, config)
+
+                this.tipoHU.fields.nombre = this.nombreTipoHU
+                alert("Se actualizó correctamente")
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         async eliminar () {
@@ -271,6 +276,7 @@ export default {
                 this.inicializarLista()
 
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -283,54 +289,58 @@ export default {
         },
 
         async crear() {
+            try {
+                if (!this.esActualizar){
+                    const idToken = this.$store.state.usuario.idToken
 
-            if (!this.esActualizar){
-                const idToken = this.$store.state.usuario.idToken
-
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${idToken}` 
+                    const config = {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${idToken}` 
+                        }
                     }
-                }
 
-                const body = {
-                    id_tipo_HU: this.idTipoHU,
-                    id_proyecto: this.idProyecto,
-                    nombre: this.nombre,
-                }
-                console.log('body',body)
-                const response = await this.axios.post(`/tipoHistoriaUsuario/columnas`, body, config)
+                    const body = {
+                        id_tipo_HU: this.idTipoHU,
+                        id_proyecto: this.idProyecto,
+                        nombre: this.nombre,
+                    }
+
+                    const response = await this.axios.post(`/tipoHistoriaUsuario/columnas`, body, config)
+                    
+                    this.inicializarLista()
+                    this.nombre = ''
+                    alert("Creado Tipo Historia Usuario")
+                }else{
                 
-                this.inicializarLista()
-                this.nombre = ''
-                alert("Creado Tipo Historia Usuario")
-            }else{
-             
-                const idToken = this.$store.state.usuario.idToken
+                    const idToken = this.$store.state.usuario.idToken
 
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${idToken}` 
+                    const config = {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${idToken}` 
+                        }
                     }
+
+                    const body = {
+                        id_proyecto: this.idProyecto,
+                        nombre: this.nombre,
+                        id_tipo_HU: this.idTipoHU,
+                        orden_origen: this.columnaSeleccionada.fields.orden,
+                        orden_destino: this.columnaSeleccionada.fields.orden
+                    }
+                    console.log('body',body)
+                    const response = await this.axios.put(`/tipoHistoriaUsuario/columnas`, body, config)
+
+                    alert("Columna Actualizada")
+
+                    this.limparSeleccion()
+                    this.inicializarLista()
                 }
-
-                const body = {
-                    id_proyecto: this.idProyecto,
-                    nombre: this.nombre,
-                    id_tipo_HU: this.idTipoHU,
-                    orden_origen: this.columnaSeleccionada.fields.orden,
-                    orden_destino: this.columnaSeleccionada.fields.orden
-                }
-                console.log('body',body)
-                const response = await this.axios.put(`/tipoHistoriaUsuario/columnas`, body, config)
-
-                alert("Columna Actualizada")
-
-                this.limparSeleccion()
-                this.inicializarLista()
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
             }
+            
         },
 
         async openDialogEliminarTipoHU(data) {
@@ -371,11 +381,14 @@ export default {
                 orden_origen: orden,
                 orden_destino: baja ? orden+1 : orden-1
             }
-            console.log('body',body)
-            const response = await this.axios.put(`/tipoHistoriaUsuario/columnas`, body, config)
+            try {
+                const response = await this.axios.put(`/tipoHistoriaUsuario/columnas`, body, config)
 
-            this.inicializarLista()
-            this.deshabilitarCambio = false
+                this.inicializarLista()
+                this.deshabilitarCambio = false
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
 
         }
 

@@ -27,7 +27,7 @@ export default {
 
 <style scoped>
 .layoutDefault__main {
-    margin-top: 70px;
-    margin-bottom: 100px;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 </style>

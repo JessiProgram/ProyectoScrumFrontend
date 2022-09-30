@@ -61,6 +61,7 @@
                                     </v-icon>
                                 </v-btn>
                                 <v-btn
+                                    :disabled="sePuedeEliminar()"
                                     class="mr-3"
                                     fab
                                     dark
@@ -348,16 +349,14 @@ export default {
                     Authorization: `Bearer ${idToken}` 
                 }
             }
-            
-            const response = await this.axios.get(`/usuario/admin/roles?email=${this.participanteSeleccionado.email}`, config)
-            this.rolesDelUsuario = response.data.map(v => parseInt(v))
+            try {
+                const response = await this.axios.get(`/usuario/admin/roles?email=${this.participanteSeleccionado.email}`, config)
+                this.rolesDelUsuario = response.data.map(v => parseInt(v))
 
-            this.rolesInternosDeParticipante = this.getListaRolesSeleccionados()
-
-            // ---------------
-
-            console.log("this.participanteSeleccionado",this.participanteSeleccionado)
-            console.log("this.rolesInternosDeParticipante",this.rolesInternosDeParticipante)
+                this.rolesInternosDeParticipante = this.getListaRolesSeleccionados()
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         getListaRolesSeleccionados () {
@@ -414,6 +413,7 @@ export default {
                 })
 
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -466,6 +466,7 @@ export default {
                 await this.axios.put(`/usuario/admin`, bodyAgregacion, config)
             
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -498,6 +499,7 @@ export default {
                 this.participantes.splice(indexDeleted, 1)
 
             } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
                 console.log('error', error)
 
             } finally {
@@ -508,6 +510,9 @@ export default {
                 }
             }
         },
+        async sePuedeEliminar(){
+            if(this.participantes <= 1) return true
+        }
     },
 
     watch: {
@@ -544,64 +549,68 @@ export default {
                 Authorization: `Bearer ${idToken}` 
             }
         }
+        try {
+            const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, config)
+            this.participantes = responseParticipantes.data
+            .map(v => {
+                return {
+                    uid: v.pk,
+                    ...v.fields
+                }
+            })
 
-        const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, config)
-        this.participantes = responseParticipantes.data
-        .map(v => {
-            return {
-                uid: v.pk,
-                ...v.fields
-            }
-        })
+            // [
+            //     {
+            //         "model": "usuarios.usuario",
+            //         "pk": 2,
+            //         "fields": {
+            //             "password": "!XqQhgH6XGumcq0xNR7Izm4s1Lr5Hd6EU8nRBpt9G",
+            //             "last_login": null,
+            //             "is_superuser": false,
+            //             "email": "jessiprogram182@gmail.com",
+            //             "username": "jessiprogram182",
+            //             "nombres": "Jessica",
+            //             "apellidos": "Alarcon",
+            //             "is_staff": false,
+            //             "is_active": true,
+            //             "date_joined": "2022-09-09T01:47:50.919Z",
+            //             "groups": [
+            //                 1,
+            //                 2,
+            //                 3
+            //             ],
+            //             "user_permissions": []
+            //         }
+            //     }
+            // ]
 
-        // [
-        //     {
-        //         "model": "usuarios.usuario",
-        //         "pk": 2,
-        //         "fields": {
-        //             "password": "!XqQhgH6XGumcq0xNR7Izm4s1Lr5Hd6EU8nRBpt9G",
-        //             "last_login": null,
-        //             "is_superuser": false,
-        //             "email": "jessiprogram182@gmail.com",
-        //             "username": "jessiprogram182",
-        //             "nombres": "Jessica",
-        //             "apellidos": "Alarcon",
-        //             "is_staff": false,
-        //             "is_active": true,
-        //             "date_joined": "2022-09-09T01:47:50.919Z",
-        //             "groups": [
-        //                 1,
-        //                 2,
-        //                 3
-        //             ],
-        //             "user_permissions": []
-        //         }
-        //     }
-        // ]
+            // Listar roles externos
+            const responseRolesInternos = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${this.idProyecto}`, config)
+            this.rolesInternos = responseRolesInternos.data
+            .map(v => {
+                return {
+                    uid: v.pk,
+                    ...v.fields
+                }
+            })
 
-        // Listar roles externos
-        const responseRolesInternos = await this.axios.get(`/rol/listar?tipo=Internos&idproyecto=${this.idProyecto}`, config)
-        this.rolesInternos = responseRolesInternos.data
-        .map(v => {
-            return {
-                uid: v.pk,
-                ...v.fields
-            }
-        })
-
-        // [
-        //     {
-        //         "model": "roles.rol",
-        //         "pk": 3,
-        //         "fields": {
-        //             "nombre": "Srum Master",
-        //             "tipo": "Interno",
-        //             "descripcion": null,
-        //             "rolGrupo": 3,
-        //             "proyecto": 2
-        //         }
-        //     }
-        // ]
+            // [
+            //     {
+            //         "model": "roles.rol",
+            //         "pk": 3,
+            //         "fields": {
+            //             "nombre": "Srum Master",
+            //             "tipo": "Interno",
+            //             "descripcion": null,
+            //             "rolGrupo": 3,
+            //             "proyecto": 2
+            //         }
+            //     }
+            // ]
+                
+        } catch (error) {
+            alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+        }
 
     },
     

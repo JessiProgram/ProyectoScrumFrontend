@@ -145,12 +145,17 @@ export default {
             const body1 = {
                 id: this.idProyecto,
             }
-            let res = await this.axios.put(`proyecto/iniciarProyecto`, body1, config)
+            try {
+                
+                let res = await this.axios.put(`proyecto/iniciarProyecto`, body1, config)
 
-            this.estadoProyecto = "Proyecto Iniciado"
-            this.posibleIniciar = false
-
-            console.log("res",res)
+                this.estadoProyecto = "Proyecto Iniciado"
+                this.posibleIniciar = false
+                
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+            
         }
 
     },

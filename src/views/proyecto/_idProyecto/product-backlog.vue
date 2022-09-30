@@ -408,25 +408,28 @@ export default {
         // get historia de usaurios
         this.inicializarLista()
 
-        // get lista de participantes
-        const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, config)
-        this.listaParticipantes = responseParticipantes.data
-        console.log("listaParticipantes",this.listaParticipantes)
+        try {
+              // get lista de participantes
+            const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, config)
+            this.listaParticipantes = responseParticipantes.data
+            console.log("listaParticipantes",this.listaParticipantes)
 
-        for (const participante of this.listaParticipantes) 
-            this.listaParticipantesCorreos.push(participante.fields.email)
+            for (const participante of this.listaParticipantes) 
+                this.listaParticipantesCorreos.push(participante.fields.email)
 
-        // get id participantes
-        const responseParticipantesId = await axios.get(`/proyecto/listar-participantes-id?idproyecto=${this.idProyecto}`, config)
-        this.listaParticipantesID = responseParticipantesId.data
+            // get id participantes
+            const responseParticipantesId = await axios.get(`/proyecto/listar-participantes-id?idproyecto=${this.idProyecto}`, config)
+            this.listaParticipantesID = responseParticipantesId.data
 
-        // get lista tipos hu
-        let resTipos = await axios.get(`/tipoHistoriaUsuario/?idproyecto=${this.idProyecto}`, config)
-        this.listaTiposHU = resTipos.data
+            // get lista tipos hu
+            let resTipos = await axios.get(`/tipoHistoriaUsuario/?idproyecto=${this.idProyecto}`, config)
+            this.listaTiposHU = resTipos.data
 
         for (const tipoHU of this.listaTiposHU) 
-            this.listaTiposHUNombres.push(tipoHU.fields.nombre)
-        
+            this.listaTiposHUNombres.push(tipoHU.fields.nombre)   
+        } catch (error) {
+            alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+        }
 
     },
 
@@ -441,9 +444,13 @@ export default {
                     Authorization: `Bearer ${idToken}` 
                 }
             }
-            // get historia de usaurios
-            const res = await axios.get(`/historiasUsuario/listar?idProyecto=${this.idProyecto}`, config)
-            this.listaHistorias = res.data
+            try {
+                // get historia de usaurios
+                const res = await axios.get(`/historiasUsuario/listar?idProyecto=${this.idProyecto}`, config)
+                this.listaHistorias = res.data
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         async crearHistoriaUsuario(){
@@ -473,16 +480,18 @@ export default {
             }
 
             console.log("body",body)
+            try {
+                const response = await this.axios.post(`/historiasUsuario/`, body, config)
 
-            const response = await this.axios.post(`/historiasUsuario/`, body, config)
+                alert("Historia de usuario creada con exito")
 
-            alert("Historia de usuario creada con exito")
+                this.datosNuevaHistoria = {}
+                this.dialogCreacion = false
 
-            this.datosNuevaHistoria = {}
-            this.dialogCreacion = false
-
-            this.inicializarLista()
-
+                this.inicializarLista()
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         async actualizarHistoria(){
@@ -514,11 +523,14 @@ export default {
             }
             console.log("Body",body)
             
+            try {
+                const response = await this.axios.put(`/historiasUsuario/`, body, config)
 
-            const response = await this.axios.put(`/historiasUsuario/`, body, config)
-
-           alert("Historia de usuario actualizada")
-
+                alert("Historia de usuario actualizada")
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
+            
         },
 
         async eliminar(){
@@ -529,9 +541,13 @@ export default {
                     Authorization: `Bearer ${idToken}` 
                 }
             }
-            await this.axios.delete(`/historiasUsuario/?idProyecto=${this.idProyecto}&idHistoria=${this.historiaSeleccionada.pk}`, config)
-            alert("Historia de usuario eliminada")
-            this.inicializarLista()
+            try {
+                await this.axios.delete(`/historiasUsuario/?idProyecto=${this.idProyecto}&idHistoria=${this.historiaSeleccionada.pk}`, config)
+                alert("Historia de usuario eliminada")
+                this.inicializarLista()
+            } catch (error) {
+                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            }
         },
 
         openDialogActualizar(data){
