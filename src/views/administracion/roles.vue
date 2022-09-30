@@ -590,8 +590,8 @@
                     Authorization: `Bearer ${idToken}` 
                 }
             }
-            
-            const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}`, config)
+            console.log("this.rolSeleccionado.uid",this.rolSeleccionado.uid)
+            const response = await this.axios.get(`/rol/?id=${this.rolSeleccionado.uid}&tipo=Externo`, config)
             this.permisosDelRol = response.data
             .filter(v => v.model !== 'roles.rol')
             .map(v => {
@@ -600,6 +600,8 @@
                     ...v.fields,
                 }
             })
+            console.log("response", response.data)
+            console.log("this.permisosDelRol",this.permisosDelRol)
 
             this.listaPermisosSeleccionados = this.getListaPermisosSeleccionados()
         },
