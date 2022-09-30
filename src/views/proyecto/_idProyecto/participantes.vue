@@ -61,7 +61,7 @@
                                     </v-icon>
                                 </v-btn>
                                 <v-btn
-                                    :disabled="sePuedeEliminar()"
+                                    :disabled="participantes.length <= 1"
                                     class="mr-3"
                                     fab
                                     dark
@@ -511,7 +511,8 @@ export default {
             }
         },
         async sePuedeEliminar(){
-            if(this.participantes <= 1) return true
+            if(this.participantes.length <= 1) return true
+            return false
         }
     },
 
