@@ -355,7 +355,11 @@ export default {
 
                 this.rolesInternosDeParticipante = this.getListaRolesSeleccionados()
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
             }
         },
 
@@ -413,7 +417,11 @@ export default {
                 })
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -466,7 +474,11 @@ export default {
                 await this.axios.put(`/usuario/admin`, bodyAgregacion, config)
             
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -499,8 +511,11 @@ export default {
                 this.participantes.splice(indexDeleted, 1)
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
-                console.log('error', error)
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
 
             } finally {
                 this.dialogEliminarParticipante = false
@@ -610,7 +625,11 @@ export default {
             // ]
                 
         } catch (error) {
-            alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
         }
 
     },

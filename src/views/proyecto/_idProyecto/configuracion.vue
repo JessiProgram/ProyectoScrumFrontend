@@ -133,7 +133,11 @@ export default {
             this.estado = proyecto.fields.estado
             this.scrumMaster = proyecto.fields.scrumMaster 
         } catch (error) {
-            alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
         }
 
     },

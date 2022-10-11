@@ -428,7 +428,11 @@ export default {
         for (const tipoHU of this.listaTiposHU) 
             this.listaTiposHUNombres.push(tipoHU.fields.nombre)   
         } catch (error) {
-            alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+            if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
         }
 
     },
@@ -449,7 +453,11 @@ export default {
                 const res = await axios.get(`/historiasUsuario/listar?idProyecto=${this.idProyecto}`, config)
                 this.listaHistorias = res.data
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
             }
         },
 
@@ -468,6 +476,8 @@ export default {
                 }
             }
 
+            console.log("indexParticipante", indexParticipante, indexTipo)
+
             const body = {
                 idProyecto: this.idProyecto,
                 nombre: this.datosNuevaHistoria.nombre,
@@ -475,8 +485,8 @@ export default {
                 prioridad_tecnica: this.datosNuevaHistoria.prioridad_tecnica,
                 prioridad_negocio: this.datosNuevaHistoria.prioridad_negocio,
                 estimacion_horas: this.datosNuevaHistoria.estimacion_horas,
-                idTipo: this.listaTiposHU[indexTipo].pk,
-                idParticipante: this.listaParticipantesID[indexParticipante].pk,
+                idTipo: indexTipo === -1 ? null : this.listaTiposHU[indexTipo].pk,
+                idParticipante: indexParticipante === -1 ? null : this.listaParticipantesID[indexParticipante].pk,
             }
 
             console.log("body",body)
@@ -490,7 +500,11 @@ export default {
 
                 this.inicializarLista()
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 
@@ -528,7 +542,11 @@ export default {
 
                 alert("Historia de usuario actualizada")
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
             
         },
@@ -546,7 +564,11 @@ export default {
                 alert("Historia de usuario eliminada")
                 this.inicializarLista()
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 

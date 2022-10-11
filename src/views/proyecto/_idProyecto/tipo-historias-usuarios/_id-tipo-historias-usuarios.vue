@@ -223,7 +223,11 @@ export default {
                 this.columnas.sort((a,b) => a.fields.orden - b.fields.orden);
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
 
         },
@@ -254,7 +258,11 @@ export default {
                 this.tipoHU.fields.nombre = this.nombreTipoHU
                 alert("Se actualizó correctamente")
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 
@@ -276,7 +284,16 @@ export default {
                 this.inicializarLista()
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -338,7 +355,11 @@ export default {
                     this.inicializarLista()
                 }
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
             
         },
@@ -387,7 +408,11 @@ export default {
                 this.inicializarLista()
                 this.deshabilitarCambio = false
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
 
         }

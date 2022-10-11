@@ -260,7 +260,11 @@ export default {
                 console.log("res.data", res.data)
                 this.listaTiposHU = res.data
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 
@@ -286,7 +290,11 @@ export default {
 
                 this.creando = false
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 
@@ -309,7 +317,16 @@ export default {
                 this.inicializarLista()
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -353,7 +370,11 @@ export default {
 
                 this.listaProyectos = res.data
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 
@@ -391,7 +412,11 @@ export default {
                 this.listaTiposHUImportar = listaTiposHUImportarAux
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
                 console.log(error)
             }
         },
@@ -419,7 +444,11 @@ export default {
                 this.inicializarLista()
             } catch (error) {
                 this.importando = false
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 

@@ -487,13 +487,16 @@
 
                 await this.axios.delete(`/rol/?id=${uidRolEliminacion}&tipoRol=Interno`, config)
 
-                const indexDelete = this.listaRoles.indexOf(v => v.uid === uidRolEliminacion)
-                this.listaRoles.splice(indexDelete, 1)
+                this.inicializar()
 
                 this.dialogEliminacion = false
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -532,6 +535,8 @@
                     tipo: 'Interno',
                     permisos: permisos
                 }
+
+                const response = await this.axios.post(`/rol/`, body, config)
                 
                 this.listaRoles.push({
                     uid: response.data[0].pk,
@@ -541,8 +546,13 @@
                 this.dialogCreacion = false
 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
-                console.log('error', error)
+                if (error.response) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+                
+                console.log('error', error.response.data)
 
             } finally {
                 this.processing = {
@@ -583,7 +593,16 @@
                 this.rolSeleccionado.descripcion = this.datosActualizadosRol.descripcion
             
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -653,7 +672,16 @@
                 await this.axios.put(`/rol/`, body1, config)
                     
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
                 console.log('error', error)
 
             } finally {
@@ -689,7 +717,11 @@
 
                 this.listaRolesInternos = response.data
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
         },
 
@@ -715,7 +747,11 @@
                 alert("Roles importados")
                 this.inicializar()
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
  
         },
@@ -758,7 +794,11 @@
                 }
                 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
 
             
@@ -793,7 +833,11 @@
                 })
                 this.listaPermisosSeleccionados = this.getListaPermisosSeleccionados()
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
             
         },
@@ -845,7 +889,11 @@
                 this.listaProyectos = res.data
                 
             } catch (error) {
-                alert("No tienes los permisos necesarios para realizar esta acción, consulta con el Scrum Master del proyecto")
+                if (error.response.data.length <= 200) {
+                alert(error.response.data)
+            } else {
+                alert("Ha ocurrido un error inesperado")
+            }
             }
 
             
