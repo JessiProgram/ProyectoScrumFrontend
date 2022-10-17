@@ -77,7 +77,8 @@
                                     mdi-pencil
                                 </v-icon>
                             </v-btn>
-                            <v-btn class="mr-3" fab dark x-small color="red" @click="openDialogEliminarTipoHU(columna)" :disabled="columnas.length <=3">
+                            <v-btn class="mr-3" fab dark x-small color="red" @click="openDialogEliminarTipoHU(columna)" 
+                            :disabled="columnas.length <=3 || proyecto.fields.estado === 'cancelado'">
                                 <v-icon dark>
                                     mdi-delete
                                 </v-icon>
