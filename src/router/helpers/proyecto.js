@@ -84,6 +84,14 @@ const rutas = [
         component: () => import('@/views/proyecto/_idProyecto/sprints/tableros.vue')
     },
     {
+        path: '/proyecto/:idProyecto/sprints/:idSprint/sprint-backlog', 
+        name: 'sprintBacklog',
+        meta: {
+            middleware: esParticipante
+        },
+        component: () => import('@/views/proyecto/_idProyecto/sprints/sprint-backlog.vue')
+    },
+    {
         path: '/proyecto/:idProyecto/sprints/:idSprint/tableros/:idTipoHU', 
         name: 'tipoHUSprint',
         meta: {

@@ -16,7 +16,12 @@
                     Agregar Miembro
                 </v-btn>
                 <v-btn class="blue--text mr-2 mb-2" outlined 
-                :disabled="sprint.fields.estado !== 'En Ejecución' "
+                v-on:click="$router.push(`/proyecto/${idProyecto}/sprints/${idSprint}/sprint-backlog`)"
+                :disabled="desabilitadoIniciar()">
+                    sprint Backlog
+                </v-btn>
+                <v-btn class="blue--text mr-2 mb-2" outlined 
+                :disabled="sprint.fields.estado !== 'En Ejecución'"
                 v-on:click="$router.push(`/proyecto/${idProyecto}/sprints/${idSprint}/tableros`)">
                     Ver Tableros
                 </v-btn>
@@ -92,7 +97,7 @@
                 </div>
 
             <h3 class="mt-4">Equipo</h3>
-            <div v-if="listaEquipo">
+            <div v-if="listaEquipo" class="mb-10">
                 <v-simple-table >
                     <thead>
                         <tr>
@@ -133,65 +138,6 @@
                 </v-simple-table>
             </div>
             
-            <h3 class="mt-8">Sprint Backlog</h3>
-            <div v-if="sprintBacklog">
-                <v-simple-table class="mb-5">
-                    <thead>
-                        <tr>
-                            <th class="text-left">
-                                Nombre
-                            </th>
-                            <th class="text-left">
-                                Descripcion
-                            </th>
-                            <th class="text-left">
-                                Miembro Asignado
-                            </th>
-                            <th class="text-left">
-                                Pioridad
-                            </th>
-                            <th class="text-left">
-                                Estado
-                            </th>
-                            <th class="text-left">
-                                Acciones
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="backlog in sprintBacklog" :key="backlog.pk">
-                            <td>{{ backlog.fields.nombre }}</td>
-                            <td>{{ backlog.fields.descripcion }}</td>
-                            <td>{{ backlog.fields.desarrollador_asignado }}</td>
-                            <td>{{ backlog.fields.prioridad_final }}</td>
-                            <td>{{ backlog.fields.estadoCadena }}</td>
-                            <td>
-                                <v-btn class="mr-3" fab dark x-small color="green"
-                                    @click="openDialogVerHistoria(backlog)">
-                                    <v-icon dark>
-                                        mdi-eye
-                                    </v-icon>
-                                </v-btn>
-                                <v-btn 
-                                outlined 
-                                small
-                                v-if="sprint"
-                                :disabled="sprint.fields.estado !== 'En Ejecución'" 
-                                @click="$router.push(`/proyecto/${idProyecto}/sprints/${idSprint}/tableros/${backlog.fields.tipo_historia_usuario}`)" 
-                                color="indigo">
-                                    Ver Tablero
-                                </v-btn>
-                            </td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            
-            </div>
-            <div v-else>
-                Visible cuando el Sprint se inicie
-            </div>
-
-
             <v-dialog
                 v-model="dialogAgregarMiembro"
                 fullscreen
@@ -220,7 +166,7 @@
                         <v-combobox
                         v-model="miembro"
                         :items="listaParticipantesCorreos"
-                        label="Participante asignado de la historia de usuario"
+                        label="Miembro asignado de la historia de usuario"
                         outlined
                         dense
                         ></v-combobox>
@@ -348,95 +294,6 @@
                     </v-card-actions>
                 </v-card>
             </v-dialog>
-            <v-dialog
-                v-if="historiaSeleccionada"
-                v-model="dialogVerHistoria"
-                fullscreen
-                hide-overlay
-                transition="dialog-bottom-transition"
-            >
-                <v-card>
-                    <v-toolbar
-                        dark
-                        color="primary"
-                    >
-                        <v-btn
-                            icon
-                            dark
-                            @click="dialogVerHistoria = false"
-                        >
-                            <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                        <v-toolbar-title>
-                            Visualizar Historia de Usuario
-                        </v-toolbar-title>
-                        <v-spacer></v-spacer>
-                    </v-toolbar>
-
-                    <div class="container my-5 px-10">
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.nombre"
-                        label="Nombre"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.descripcion"
-                        label="Descripcion"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.prioridad_tecnica"
-                        label="Prioridad Tecnica"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.prioridad_negocio"
-                        label="Prioridad de Negocio"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.estimacion_horas"
-                        label="Estimacion horas"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.tipo_historia_usuario"
-                        label="Tipo de Historia de Usuario"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.desarrollador_asignado"
-                        label="Desarrollador Asignado"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.horas_trabajadas"
-                        label="Horas Trabajadas"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.prioridad_final"
-                        label="Prioridad"
-                        required
-                        ></v-text-field>
-                        <v-text-field
-                        readonly
-                        v-model="historiaSeleccionada.fields.estadoCadena"
-                        label="Estado"
-                        required
-                        ></v-text-field>
-                    </div>
-                </v-card>
-            </v-dialog>
         </v-container>
     </LayoutDefault>
 </template>
@@ -470,12 +327,12 @@ export default {
                     href: `/proyecto/${this.$route.params.idProyecto}`,
                 },
                 {
-                    text: `Sprint ${this.$route.params.idSprint}`,
+                    text: `Sprints`,
                     disabled: false,
-                    href: `/proyecto/${this.$route.params.idProyecto}/sprints/${this.$route.params.idSprint}`,
+                    href: `/proyecto/${this.$route.params.idProyecto}/sprints`,
                 },
                 {
-                    text: `Sprints`,
+                    text: `Sprint ${this.$route.params.idSprint}`,
                     disabled: true,
                     href: `/proyecto/${this.$route.params.idProyecto}/sprints/${this.$route.params.idSprint}`,
                 },
@@ -529,9 +386,6 @@ export default {
         await this.obtenerEquipo()
 
         this.obtenerParticipantesSinEquipo()
-        if(this.sprint.fields.estado !== 'Planificación'){
-            await this.obtenerSprintBacklog()
-        }
         
         
     },
@@ -599,36 +453,6 @@ export default {
                     const pos = this.listaEquipo.map(e => e.fields.email).indexOf(participante.fields.email);
                     if(pos === -1 )
                         this.listaParticipantesCorreos.push(participante.fields.email)
-                }
-            }
-        },
-
-        async obtenerSprintBacklog(){
-            try {
-
-                let res = await axios.get(`/sprints/backlog/?idProyecto=${this.idProyecto}&idSprint=${this.idSprint}`, this.config)
-                this.sprintBacklog = res.data
-
-                for (let i = 0; i < this.sprintBacklog.length; i++) {
-                    const element = this.sprintBacklog[i];
-                    const pos = this.listaParticipantesID.map(e => e.pk).indexOf(element.fields.desarrollador_asignado);
-                    this.sprintBacklog[i].fields.desarrollador_asignado = this.listaParticipantes[pos].fields.email
-                    
-                    console.log('element.fields.estado',element.fields.estado)
-                    if(element.fields.estado && element.fields.estado  !== 'finalizada' && element.fields.estado !== 'cancelada')
-                        await this.obtenerEstado(element.fields.estado, element)
-                    else
-                        this.sprintBacklog[i].fields.estadoCadena = this.sprintBacklog[i].fields.estado
-   
-                }
-                this.sprintBacklog = Object.assign({}, this.sprintBacklog)
-
-            } catch (error) {
-                console.log(error)
-                if (error.response.data.length <= 200) {
-                    alert(error.response.data)
-                } else {
-                    alert("Ha ocurrido un error inesperado")
                 }
             }
         },
@@ -762,17 +586,6 @@ export default {
             }
         },
 
-        async obtenerEstado(idColumna, historiaUsuario){
-            // obtenemos las columnas
-            let res = await axios.get(`/tipoHistoriaUsuario/columnas?idColumna=${idColumna}`, this.config)
-
-            let nombreColumna = res.data[0].fields.nombre
-            console.log('nombreColumna',nombreColumna)
-            historiaUsuario.fields.estadoCadena = nombreColumna
-        },
-
-        
-
         openDialogActualizarMiembro(data){
             this.miembroSeleccionado = data
             this.capacidad = this.miembroSeleccionado.capacidad
@@ -782,11 +595,6 @@ export default {
         openDialogEliminarMiembro(data){
             this.miembroSeleccionado = data
             this.dialogEliminarMiembro = true
-        },
-
-        openDialogVerHistoria(data){
-            this.historiaSeleccionada = data
-            this.dialogVerHistoria = true
         },
 
         desabilitadoIniciar(){

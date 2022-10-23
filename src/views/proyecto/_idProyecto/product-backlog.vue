@@ -146,30 +146,17 @@
                                 ></v-text-field>
                             </v-col>
                         </v-row>
-                        <v-row class="mt-3 mb-3">
-                            <v-col cols="12" md="6">
-                                <h4>Participante asignado a la historia de usuario:</h4>
-                                <v-divider class="mb-5" />
-                                <v-combobox
-                                v-model="datosNuevaHistoria.participante"
-                                :items="listaParticipantesCorreos"
-                                label="Participante asignado de la historia de usuario"
-                                outlined
-                                dense
-                                ></v-combobox>
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <h4>Tipo de historia de usuario asignado a la historia de usuario:</h4>
-                                <v-divider class="mb-5" />
-                                <v-combobox
-                                v-model="datosNuevaHistoria.idTipo"
-                                :items="listaTiposHUNombres"
-                                label="Tipo de historia de usuario asignado de la historia de usuario"
-                                outlined
-                                dense
-                                ></v-combobox>
-                            </v-col>
-                        </v-row>
+
+                        <h4>Tipo de historia de usuario asignado a la historia de usuario:</h4>
+                        <v-divider class="mb-5" />
+                        <v-combobox
+                        v-model="datosNuevaHistoria.idTipo"
+                        :items="listaTiposHUNombres"
+                        label="Tipo de historia de usuario asignado de la historia de usuario"
+                        outlined
+                        dense
+                        ></v-combobox>
+
                         <v-btn
                             @click="crearHistoriaUsuario()"
                             class="mt-3 mr-2 mb-4"
@@ -232,7 +219,7 @@
                             </v-col>
                         </v-row>
                         <v-row class="mt-3 mb-3">
-                            <v-col cols="12" md="3">
+                            <v-col cols="12" md="4">
                                 <h4>Prioridad tecnica de la historia de usuario:</h4>
                                 <v-divider class="mb-5" />
                                 <v-text-field
@@ -241,7 +228,7 @@
                                     required
                                 ></v-text-field>
                             </v-col>
-                            <v-col cols="12" md="3">
+                            <v-col cols="12" md="4">
                                 <h4>Prioridad de negocio de la historia de usuario:</h4>
                                 <v-divider class="mb-5" />
                                 <v-text-field
@@ -250,21 +237,12 @@
                                     required
                                 ></v-text-field>
                             </v-col>
-                            <v-col cols="12" md="3">
+                            <v-col cols="12" md="4">
                                 <h4>Estimacion en horas de la historia de usuario:</h4>
                                 <v-divider class="mb-5" />
                                 <v-text-field
                                     v-model="historiaSeleccionada.fields.estimacion_horas"
                                     label="Prioridad de negocio de la historia de usuario"
-                                    required
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" md="3">
-                                <h4>Horas trabajadas de la historia de usuario:</h4>
-                                <v-divider class="mb-5" />
-                                <v-text-field
-                                    v-model="historiaSeleccionada.fields.horas_trabajadas"
-                                    label="Horas trabajadas de la historia de usuario"
                                     required
                                 ></v-text-field>
                             </v-col>
@@ -274,6 +252,7 @@
                                 <h4>Participante asignado a la historia de usuario:</h4>
                                 <v-divider class="mb-5" />
                                 <v-combobox
+                                readonly
                                 v-model="historiaSeleccionada.fields.desarrollador_asignado"
                                 :items="listaParticipantesCorreos"
                                 label="Participante asignado de la historia de usuario"
@@ -535,7 +514,7 @@ export default {
                 prioridad_negocio: this.datosNuevaHistoria.prioridad_negocio,
                 estimacion_horas: this.datosNuevaHistoria.estimacion_horas,
                 idTipo: indexTipo === -1 ? null : this.listaTiposHU[indexTipo].pk,
-                idParticipante: indexParticipante === -1 ? null : this.listaParticipantesID[indexParticipante].pk,
+                idParticipante: null,
             }
 
             console.log("body",body)
@@ -580,7 +559,7 @@ export default {
                 descripcion: this.historiaSeleccionada.fields.descripcion,
                 prioridad_tecnica: this.historiaSeleccionada.fields.prioridad_tecnica,
                 prioridad_negocio: this.historiaSeleccionada.fields.prioridad_negocio,
-                estimacion_horas: this.historiaSeleccionada.fields.estimacion_horas,
+                estimacion_horas: null,
                 idTipo: this.listaTiposHU[indexTipo].pk,
                 idParticipante: this.listaParticipantes[indexParticipante].pk,
                 horas_trabajadas: this.historiaSeleccionada.fields.horas_trabajadas,
@@ -617,10 +596,10 @@ export default {
                 console.log('response',response)
             } catch (error) {
                 if (error.response.data.length <= 200) {
-                alert(error.response.data)
-            } else {
-                alert("Ha ocurrido un error inesperado")
-            }
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
             }
         },
 
