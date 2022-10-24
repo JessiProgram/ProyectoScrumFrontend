@@ -431,6 +431,7 @@ export default {
             }
         },
 
+        
         async obtenerParticipantes(){
             // get lista de participantes
             const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, this.config)
