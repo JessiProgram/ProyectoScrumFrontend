@@ -7,11 +7,18 @@
                 </template>
             </v-breadcrumbs>
         </div>
-        <v-container v-if="sprint">
+        <v-container v-if="sprint && listaMiembros">
             <h3 class="mb-6">Sprint Backlog</h3>
+
+            <v-btn class="blue--text mr-2 mb-2" outlined 
+                v-if="sprint.fields.estado === 'Planificación'"
+                v-on:click="avanzarSprint()"
+                :disabled="sprintBacklog.length === 0 || !flagMiembrosAsignados">
+                    Iniciar Sprint
+                </v-btn>
             <v-row class="mt-3">
                 <v-col cols="12" md="6">
-                    <div v-if="sprint.fields.estado === 'Planificación'">
+                    <div v-if="sprint.fields.estado === 'Planificación' || sprint.fields.estado === 'Creado'">
                         <h4>Lista de Historias de Usuarios</h4>
                         <v-simple-table class="mb-5">
                             <thead>
@@ -23,7 +30,7 @@
                                         Descripcion
                                     </th>
                                     <th class="text-left">
-                                        Miembro Asignado
+                                        Participante Asignado
                                     </th>
                                     <th class="text-left">
                                         Pioridad
@@ -40,7 +47,7 @@
                                 <tr v-for="backlog in listaHistorias" :key="backlog.pk">
                                     <td>{{ backlog.fields.nombre }}</td>
                                     <td>{{ backlog.fields.descripcion }}</td>
-                                    <td>{{ backlog.fields.desarrollador_asignado }}</td>
+                                    <td>{{ backlog.fields.desarrollador_asignado_email }}</td>
                                     <td>{{ backlog.fields.prioridad_final }}</td>
                                     <td>{{ backlog.fields.estadoCadena }}</td>
                                     <td>
@@ -53,7 +60,7 @@
                                             <v-icon>mdi-eye</v-icon>
                                             </v-btn>
                                             <v-btn @click="agregarHistoria(backlog)"
-                                            v-if="sprint.fields.estado === 'Planificación'">
+                                            v-if="sprint.fields.estado === 'Planificación' || sprint.fields.estado === 'Creado'">
                                             <v-icon>mdi-arrow-right</v-icon>
                                             </v-btn>
 
@@ -94,7 +101,7 @@
                         <tr v-for="backlog in sprintBacklog" :key="backlog.pk">
                             <td>{{ backlog.fields.nombre }}</td>
                             <td>{{ backlog.fields.descripcion }}</td>
-                            <td>{{ backlog.fields.desarrollador_asignado }}</td>
+                            <td>{{ verificarMiembro(backlog.fields.desarrollador_asignado_email) ? backlog.fields.desarrollador_asignado_email : '⚠️'}}</td>
                             <td>{{ backlog.fields.prioridad_final }}</td>
                             <td>{{ backlog.fields.estadoCadena }}</td>
                             <td>
@@ -106,12 +113,12 @@
                                     </v-btn>
 
                                     <v-btn @click="openDialogActualizar(backlog)" 
-                                    v-if="sprint.fields.estado === 'Planificación'">
+                                    v-if="sprint.fields.estado === 'Planificación' || sprint.fields.estado === 'Creado'">
                                     <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
 
                                     <v-btn @click="quitarHistoria(backlog)"
-                                    v-if="sprint.fields.estado === 'Planificación'">
+                                    v-if="sprint.fields.estado === 'Planificación' || sprint.fields.estado === 'Creado'">
                                     <v-icon>mdi-arrow-left</v-icon>
                                     </v-btn>
 
@@ -170,8 +177,8 @@
                                 <h4>Participante asignado a la historia de usuario:</h4>
                                 <v-divider class="mb-5" />
                                 <v-combobox
-                                v-model="historiaSeleccionada.fields.desarrollador_asignado"
-                                :items="listaParticipantesCorreos"
+                                v-model="historiaSeleccionada.fields.desarrollador_asignado_email"
+                                :items="listaMiembrosCorreos"
                                 label="Participante asignado de la historia de usuario"
                                 outlined
                                 dense
@@ -265,7 +272,7 @@
                         ></v-text-field>
                         <v-text-field
                         readonly
-                        v-model="historiaSeleccionada.fields.desarrollador_asignado"
+                        v-model="historiaSeleccionada.fields.desarrollador_asignado_email"
                         label="Desarrollador Asignado"
                         required
                         ></v-text-field>
@@ -290,6 +297,9 @@
                     </div>
                 </v-card>
             </v-dialog>
+        </v-container>
+        <v-container v-else>
+            Debe agregar miembros al equipo del sprint
         </v-container>
     </LayoutDefault>
 </template>
@@ -344,9 +354,12 @@ export default {
             sprint: null,
             sprintBacklog: [],
 
-            listaParticipantes:[],
-            listaParticipantesCorreos:[],
-            listaParticipantesID:[],
+            listaMiembros:[],
+            listaMiembrosCorreos:[],
+            listaMiembrosID:[],
+
+            listaParticipantes: [],
+            listaParticipantesID: [],
 
             historiaSeleccionada: null,
             dialogVerHistoria: false,
@@ -359,6 +372,8 @@ export default {
 
             listaTiposHU: [],
             listaTiposHUNombres: [],
+
+            flagMiembrosAsignados: false,
 
         }
     },
@@ -378,8 +393,10 @@ export default {
         }
         this.obtenerSprint()
         await this.obtenerParticipantes()
+        await this.obtenerMiembros()
         await this.obtenerSprintBacklog()
         this.obtenerHistoriasUsuarios()
+        this.verificarMiembrosAsignados()
         this.obtenerTipoHU()
     },
     methods: {
@@ -393,7 +410,7 @@ export default {
                 this.sprint.fields.fecha_inicio = this.sprint.fields.fecha_inicio ? new Date(this.sprint.fields.fecha_inicio).toLocaleString() : ''
                 this.sprint.fields.fecha_fin = this.sprint.fields.fecha_fin ? new Date(this.sprint.fields.fecha_fin).toLocaleString() : ''
 
-                if(this.sprint.fields.estado !== 'Planificación') this.enPlanificacion = 12
+                if(this.sprint.fields.estado !== 'Planificación' && this.sprint.fields.estado !== 'Creado') this.enPlanificacion = 12
             } catch (error) {
                 console.log(error)
                 if (error.response.data.length <= 200) {
@@ -402,6 +419,14 @@ export default {
                     alert("Ha ocurrido un error inesperado")
                 }
             }
+        },
+        async obtenerParticipantes(){
+            const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, this.config)
+            this.listaParticipantes = responseParticipantes.data
+
+            // get id participantes
+            const responseParticipantesId = await axios.get(`/proyecto/listar-participantes-id?idproyecto=${this.idProyecto}`, this.config)
+            this.listaParticipantesID = responseParticipantesId.data
         },
         async obtenerTipoHU (){
             // get lista tipos hu
@@ -420,9 +445,11 @@ export default {
 
                 for (let i = 0; i < this.sprintBacklog.length; i++) {
                     const element = this.sprintBacklog[i];
-                    const pos = this.listaParticipantesID.map(e => e.pk).indexOf(element.fields.desarrollador_asignado);
-                    this.sprintBacklog[i].fields.desarrollador_asignado = this.listaParticipantes[pos].fields.email
-                    
+                    if(element.fields.desarrollador_asignado){
+                        const pos = this.listaMiembrosID.indexOf(element.fields.desarrollador_asignado);
+                        this.sprintBacklog[i].fields.desarrollador_asignado_email = this.listaMiembrosCorreos[pos]
+                    }
+
                     if(element.fields.estado && element.fields.estado  !== 'finalizada' && element.fields.estado !== 'cancelada')
                         await this.obtenerEstado(element.fields.estado, element)
                     else
@@ -450,6 +477,7 @@ export default {
 
                 for (let i = 0; i < listaHistoriasRes.length; i++) {
                     const historia = listaHistoriasRes[i];
+
                     let pos = this.sprintBacklog.map(e => e.pk).indexOf(historia.pk);
 
                     if(historia.fields.estado !== 'finalizada' && historia.fields.estado !== 'cancelada' && pos === -1){
@@ -458,6 +486,18 @@ export default {
                         listaHistoriasAceptadas.push(historia)
                     }
                 }
+                
+                console.log('this.listaParticipantesID',this.listaParticipantesID)
+                for (let i = 0; i < listaHistoriasAceptadas.length; i++) {
+                    const historia = listaHistoriasAceptadas[i];
+                    if(historia.fields.desarrollador_asignado){
+                        let posParticipante = this.listaParticipantesID.map(e => e.pk).indexOf(historia.fields.desarrollador_asignado);
+                        console.log('posParticipante',posParticipante,historia.fields.desarrollador_asignado)
+                        listaHistoriasAceptadas[i].fields.desarrollador_asignado_email = this.listaParticipantes[posParticipante].fields.email
+                    }
+                    
+                }
+
                 this.listaHistorias = listaHistoriasAceptadas
                 
             } catch (error) {
@@ -485,18 +525,23 @@ export default {
 
             historiaUsuario.fields.estadoCadena = nombreColumna
         },
-        async obtenerParticipantes(){
+        async obtenerMiembros(){
             // get lista de participantes
+            const responseMiembros = await axios.get(`/sprints/equipo?idProyecto=${this.idProyecto}&idSprint=${this.idSprint}`, this.config)
+            this.listaMiembros = responseMiembros.data
+
+            // get participantes
             const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, this.config)
-            this.listaParticipantes = responseParticipantes.data
+            let listaParticipantes = responseParticipantes.data
 
-            // get id participantes
-            const responseParticipantesId = await axios.get(`/proyecto/listar-participantes-id?idproyecto=${this.idProyecto}`, this.config)
-            this.listaParticipantesID = responseParticipantesId.data
+            this.listaMiembrosID = []
 
-            for (let i = 0; i < this.listaParticipantes.length; i++) {
-                const element = this.listaParticipantes[i];
-                this.listaParticipantesCorreos.push(element.fields.email)
+            for (let i = 0; i < this.listaMiembros.length; i++) {
+                const element = this.listaMiembros[i];
+                this.listaMiembrosID.push(element.fields.usuario)
+
+                let pos = listaParticipantes.map(e => e.pk).indexOf(element.fields.usuario);
+                this.listaMiembrosCorreos.push(listaParticipantes[pos].fields.email)
             }
             
         },
@@ -514,6 +559,7 @@ export default {
                 
                 await this.obtenerSprintBacklog()
                 await this.obtenerHistoriasUsuarios()
+                this.verificarMiembrosAsignados()
             } catch (error) {
                 console.log(error)
                 if (error.res.data.length <= 200) {
@@ -529,9 +575,10 @@ export default {
             try {
 
                 let res = await axios.delete(`/sprints/backlog/?idProyecto=${this.idProyecto}&idSprint=${this.idSprint}&idHistoria=${historia.pk}`, this.config)
-                
+
                 await this.obtenerSprintBacklog()
                 await this.obtenerHistoriasUsuarios()
+                this.verificarMiembrosAsignados()
 
             } catch (error) {
                 console.log(error)
@@ -543,11 +590,31 @@ export default {
             }
         },
 
+        verificarMiembrosAsignados(){
+            let flag = true
+            if(!this.sprintBacklog.length) flag = false; 
+
+            for (let i = 0; i < this.sprintBacklog.length; i++) {
+                const element = this.sprintBacklog[i];
+                if(!element.fields.desarrollador_asignado){ 
+                    flag = false; 
+                    console.log('flase1', element.fields.desarrollador_asignado)
+                    continue
+                }
+                let pos = this.listaMiembros.map(e => e.fields.usuario).indexOf(element.fields.desarrollador_asignado);
+                if(pos === -1) { 
+                    flag = false; 
+                    console.log('flase2')
+                }
+            }
+            this.flagMiembrosAsignados = flag
+        },
+
         async actualizarHistoria(){
             const idToken = this.$store.state.usuario.idToken
 
             //obtenemos la id del participante
-            let indexParticipante = this.listaParticipantesCorreos.indexOf(this.historiaSeleccionada.fields.desarrollador_asignado)
+            let indexParticipante = this.listaMiembrosCorreos.indexOf(this.historiaSeleccionada.fields.desarrollador_asignado_email)
             // obtenemos la id del tipoHU
             let indexTipo = this.listaTiposHUNombres.indexOf(this.historiaSeleccionada.fields.tipo_historia_usuario)
 
@@ -567,7 +634,7 @@ export default {
                 prioridad_negocio: null,
                 estimacion_horas: this.historiaSeleccionada.fields.estimacion_horas,
                 idTipo: this.listaTiposHU[indexTipo].pk,
-                idParticipante: this.listaParticipantes[indexParticipante].pk,
+                idParticipante: this.listaMiembros[indexParticipante].fields.usuario,
                 horas_trabajadas: null,
                 estimacion: this.historiaSeleccionada.fields.estimacion,
                 estado: null,
@@ -604,6 +671,46 @@ export default {
             
             this.dialogActualizacion = true
         },
+
+        async avanzarSprint(){
+            const body = {
+                idProyecto: this.idProyecto,
+                idSprint: this.idSprint,
+                opcion: 'Avanzar',
+            }
+            
+            try {
+                await this.axios.put(`/sprints/estado`, body, this.config)
+
+                if(this.sprint.fields.estado == 'Planificación'){
+                    alert("Sprint Iniciado")
+                } else {
+                    alert("Sprint Finalizado")
+                }
+
+                this.obtenerSprint()
+                
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
+        },
+        verificarMiembro(email){
+            let flag = true
+            if(!email){ 
+                flag = false; 
+            }
+            let pos = this.listaMiembrosCorreos.indexOf(email);
+            if(pos === -1) { 
+                flag = false; 
+            }
+            return flag
+        }
+            
+        
     }
 }
     

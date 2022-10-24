@@ -11,7 +11,7 @@
             <h3>Datos de Sprint</h3>
             <div v-if="sprint">
                 <v-btn class="blue--text mr-2 mb-2" outlined 
-                :disabled="sprint.fields.estado !== 'Planificación'"
+                :disabled="sprint.fields.estado !== 'Creado'"
                 v-on:click="dialogAgregarMiembro=true">
                     Agregar Miembro
                 </v-btn>
@@ -25,12 +25,7 @@
                 v-on:click="$router.push(`/proyecto/${idProyecto}/sprints/${idSprint}/tableros`)">
                     Ver Tableros
                 </v-btn>
-                <v-btn class="blue--text mr-2 mb-2" outlined 
-                v-if="sprint.fields.estado === 'Planificación'"
-                v-on:click="avanzarSprint()"
-                :disabled="desabilitadoIniciar()">
-                    Iniciar Sprint
-                </v-btn>
+                
 
                 <v-btn class="blue--text mr-2 mb-2" outlined 
                 v-if="sprint.fields.estado === 'En Ejecución'"
@@ -480,33 +475,7 @@ export default {
             }
                 
         },
-        async avanzarSprint(){
-            const body = {
-                idProyecto: this.idProyecto,
-                idSprint: this.idSprint,
-                opcion: 'Avanzar',
-            }
-            
-            try {
-                await this.axios.put(`/sprints/estado`, body, this.config)
-
-                if(this.sprint.fields.estado == 'Planificación'){
-                    alert("Sprint Iniciado")
-                    this.obtenerSprintBacklog()
-                } else {
-                    alert("Sprint Finalizado")
-                }
-
-                this.obtenerSprint()
-                
-            } catch (error) {
-                if (error.response.data.length <= 200) {
-                    alert(error.response.data)
-                } else {
-                    alert("Ha ocurrido un error inesperado")
-                }
-            }
-        },
+        
 
         async agregarMiembro(){
             // buscamos la id
@@ -583,6 +552,32 @@ export default {
                 this.confirmacionEliminacionMiembro = ''
                 await this.obtenerEquipo()
                 this.obtenerParticipantesSinEquipo()
+            }
+        },
+        async avanzarSprint(){
+            const body = {
+                idProyecto: this.idProyecto,
+                idSprint: this.idSprint,
+                opcion: 'Avanzar',
+            }
+            
+            try {
+                await this.axios.put(`/sprints/estado`, body, this.config)
+
+                if(this.sprint.fields.estado == 'Planificación'){
+                    alert("Sprint Iniciado")
+                } else {
+                    alert("Sprint Finalizado")
+                }
+
+                this.obtenerSprint()
+                
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
             }
         },
 
