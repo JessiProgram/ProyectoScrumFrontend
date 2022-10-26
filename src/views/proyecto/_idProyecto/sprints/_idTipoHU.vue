@@ -151,10 +151,12 @@ export default {
                     href: `/proyecto/${this.$route.params.idProyecto}/sprints/${this.$route.params.idSprint}/tableros/${this.$route.params.idTipoHU}`,
                 },
             ],
+
+            
+            
         }
     },
-
-
+    
     components: {
         LayoutDefault,
         Kanban,

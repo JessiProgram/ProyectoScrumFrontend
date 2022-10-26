@@ -352,6 +352,21 @@
                                                     </v-list-item-content>
 
                                                     <v-list-item-action>
+                                                        <v-btn
+                                                        class="mx-2"
+                                                        outlined
+                                                        fab
+                                                        dark
+                                                        x-small
+                                                        color="primary"
+                                                        @click="openDialogVerPermisos()"
+                                                        >
+                                                        <v-icon >
+                                                            mdi-eye
+                                                        </v-icon>
+                                                        </v-btn>
+                                                    </v-list-item-action>
+                                                    <v-list-item-action>
                                                         <v-btn outlined :loading="importando" @click="importarRoles(rol)" color="indigo">
                                                             Importar
                                                         </v-btn>
@@ -379,6 +394,83 @@
                         </v-btn>
                     </v-card-actions>
                 </v-container>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+            v-model="dialog"
+            fullscreen
+            hide-overlay
+            transition="dialog-bottom-transition"
+        >
+            <v-card v-if="rolSeleccionado">
+                <v-toolbar
+                    dark
+                    color="primary"
+                >
+                    <v-btn
+                        icon
+                        dark
+                        @click="dialog = false"
+                    >
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>
+                        {{rolSeleccionado.nombre}}
+                    </v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                    </v-toolbar-items>
+                </v-toolbar>
+
+                <div class="container my-5 px-10">
+                    <v-row class="mt-3">
+                        <v-col cols="12" md="6">
+                            <h2>Nombre del rol:</h2>
+                            <v-divider class="mb-5" />
+                            <v-text-field
+                                v-model="datosActualizadosRol.nombre"
+                                label="Nombre del rol"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                            <h2>Descripción del rol:</h2>
+                            <v-divider class="mb-5" />
+                            <v-text-field
+                                v-model="datosActualizadosRol.descripcion"
+                                label="Descripción del rol"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+
+                    <v-btn
+                        @click="actualizarDatos"
+                        :disabled="proyecto.fields.estado === 'cancelado'"
+                        class="mt-3 mr-2"
+                        outlined
+                        color="green"
+                    >
+                        Actualizar datos
+                    </v-btn>
+
+                </div>
+
+                <v-divider></v-divider>
+
+                <div class="container mt-5">
+                    <h2>
+                        Permisos:
+                    </h2>
+                    <ul>
+                        <li
+                            v-for="(item, index) in codigosPermisosInternos" :key="index"
+                            :label="`${nombresPermisosInternos[index]}`"
+                        ></li>
+                    </ul>
+                </div>
+                
             </v-card>
         </v-dialog>
 
@@ -895,14 +987,18 @@
                 
             } catch (error) {
                 if (error.response.data.length <= 200) {
-                alert(error.response.data)
-            } else {
-                alert("Ha ocurrido un error inesperado")
-            }
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
             }
 
             
         },
+
+        openDialogVerPermisos(){
+
+        }
         
 
     },

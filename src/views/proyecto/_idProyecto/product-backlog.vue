@@ -141,7 +141,7 @@
                                 <v-divider class="mb-5" />
                                 <v-text-field
                                     v-model="datosNuevaHistoria.estimacion_horas"
-                                    label="Prioridad de negocio de la historia de usuario"
+                                    label="Estimacion en horas de la historia de usuario"
                                     required
                                 ></v-text-field>
                             </v-col>
@@ -242,7 +242,7 @@
                                 <v-divider class="mb-5" />
                                 <v-text-field
                                     v-model="historiaSeleccionada.fields.estimacion_horas"
-                                    label="Prioridad de negocio de la historia de usuario"
+                                    label="Estimacion en horas de la historia de usuario"
                                     required
                                 ></v-text-field>
                             </v-col>

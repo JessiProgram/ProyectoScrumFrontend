@@ -11,7 +11,7 @@
             <h3>Datos de Sprint</h3>
             <div v-if="sprint">
                 <v-btn class="blue--text mr-2 mb-2" outlined 
-                :disabled="sprint.fields.estado !== 'Creado'"
+                :disabled="sprint.fields.estado !== 'Planificación'"
                 v-on:click="dialogAgregarMiembro=true">
                     Agregar Miembro
                 </v-btn>
@@ -25,7 +25,12 @@
                 v-on:click="$router.push(`/proyecto/${idProyecto}/sprints/${idSprint}/tableros`)">
                     Ver Tableros
                 </v-btn>
-                
+                <v-btn class="blue--text mr-2 mb-2" outlined 
+                v-if="sprint.fields.estado === 'Creado'"
+                v-on:click="avanzarSprint()"
+                >
+                    Planificar Sprint
+                </v-btn>
 
                 <v-btn class="blue--text mr-2 mb-2" outlined 
                 v-if="sprint.fields.estado === 'En Ejecución'"
@@ -161,7 +166,7 @@
                         <v-combobox
                         v-model="miembro"
                         :items="listaParticipantesCorreos"
-                        label="Miembro asignado de la historia de usuario"
+                        label="Miembro asignado al equipo del sprint"
                         outlined
                         dense
                         ></v-combobox>
@@ -492,6 +497,7 @@ export default {
             try{
 
                 const response = await this.axios.post(`/sprints/equipo`, body, this.config)
+                this.obtenerSprint()
                 alert("Miembro agregado")
 
             } catch (error) {
@@ -521,7 +527,7 @@ export default {
             
             try {
                 await this.axios.put(`/sprints/equipo`, body, this.config)
-
+                this.obtenerSprint()
                 alert("Miembro Actualizado")
             } catch (error) {
                 if (error.response.data.length <= 200) {
@@ -540,7 +546,7 @@ export default {
         async eliminarMiembro(){
             try {
                 await this.axios.delete(`/sprints/equipo?idProyecto=${this.idProyecto}&idSprint=${this.idSprint}&idMiembroEquipo=${this.miembroSeleccionado.id}`, this.config)
-
+                this.obtenerSprint()
                 alert("Miembro Eliminado")
             } catch (error) {
                 if (error.response.data.length <= 200) {
@@ -567,6 +573,8 @@ export default {
 
                 if(this.sprint.fields.estado == 'Planificación'){
                     alert("Sprint Iniciado")
+                } else if (this.sprint.fields.estado == 'Creado'){
+                    alert("Sprint en Planificación")
                 } else {
                     alert("Sprint Finalizado")
                 }

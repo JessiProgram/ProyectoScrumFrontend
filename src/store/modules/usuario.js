@@ -38,17 +38,11 @@ export default {
         },
         esAdministrador (state) {
             const roles_admin = [
-                'crear_proyecto',
-                
                 'crear_rol_externo',
-                'listar_roles_externos',
                 'actualizar_rol_externo',
                 'borrar_rol_externo',
-                'listar_permisos_externos',
-
-                'listar_permisos',
-                
                 'modificar_roles_externos_de_usuario',
+                'crear_proyecto',
             ]
 
             let tieneAlgunRol = false

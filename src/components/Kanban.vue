@@ -134,6 +134,7 @@ export default {
                 this.$emit('update-block', block.dataset.blockId, newState, index);
             })
             .on('cancel', (el, container, source) => {
+                console.log('se cancelo')
                 this.$emit('cancel', el, container, source);
             })
             .on('remove', (el, container, source) => {

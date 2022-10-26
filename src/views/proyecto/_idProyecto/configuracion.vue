@@ -50,6 +50,14 @@
             required
             ></v-text-field>
 
+            <v-text-field
+            v-model="proyecto.fields.motivCancelacion"
+            v-if="estado === 'cancelado'"
+            :readonly="true"
+            label="Motivo de cancelación"
+            required
+            ></v-text-field>
+
             <div class="container text-right">
                 <v-btn
                 class="ma-2"
@@ -99,12 +107,18 @@
                             :label="`Escribe: ${proyecto.fields.nombre}`"
                             required
                         ></v-text-field>
+                        <v-text-field
+                            v-model="mensajeCancelacion"
+                            class="inputConfirmacionAccion"
+                            :label="`Escribe el motivo de cancelación`"
+                            required
+                        ></v-text-field>
                     </div>
 
                     <v-card-actions class="d-flex flex-row-reverse pb-5 pt-5">
                         <v-btn
                             class="ml-4 mr-3"
-                            :disabled="confirmacionEliminacionProyecto !== proyecto.fields.nombre"
+                            :disabled="confirmacionEliminacionProyecto !== proyecto.fields.nombre || !mensajeCancelacion"
                             color="red"
                             text
                             @click="cancelarProyecto()"
@@ -170,6 +184,7 @@ export default {
 
             confirmacionEliminacionProyecto: '',
             dialogEliminarProyecto: false,
+            mensajeCancelacion: '',
 
         }
     },
@@ -251,9 +266,10 @@ export default {
                 }
             }
 
+            let mensaje = this.mensajeCancelacion.replaceAll(' ','%20')
             
             try {
-                await this.axios.delete(`/proyecto/?idProyecto=${this.idProyecto}`, config)
+                await this.axios.delete(`/proyecto/?idProyecto=${this.idProyecto}&mensaje=${mensaje}`, config)
 
                 alert("Proyecto Cancelado")
             } catch (error) {
