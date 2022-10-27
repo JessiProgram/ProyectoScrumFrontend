@@ -10,38 +10,65 @@
         <v-container v-if="tipoHU">
             <h3>Tipo Historia de Usuario: {{tipoHU.fields.nombre}}</h3>
 
-            <div v-if="historiasUsuarios.length !== 0">
-                <Kanban :stages="columnasNombres" :blocks="historiasUsuarios" @update-block="updateBlock">
-                    <div v-for="(stage, index) of columnasNombres" :slot="stage" :key="stage">
-                        <h2>
-                        {{ stage }}
-                        </h2>
-                    </div>
-                    <div v-for="item in historiasUsuarios" :slot="item.id" :key="item.id"
-                    >
-                  
-                        {{ item.fields.nombre }}
-                        
-                        <v-btn
-                            outlined
-                            text
-                            rounded
-                            small
-                            color="white"
-                            class="ml-3"
-                            @click="openDialogActualizarHoras(item)"
-                        >+ Horas</v-btn>
-                   
-                    </div>
-                </Kanban>
-            </div>
+            <v-row class="mt-3">
+                <v-col v-for="(columna,indexC) of columnasNombres" :key="indexC">
+                    <v-container style="background-color: aqua; border-radius: 0.4rem;">
+                        <h4>{{columna}}</h4>
+                        <div v-for="historia in historiasUsuarios">
+                            <div v-if="historia.status == columna">
 
-        <v-dialog
-                v-model="dialogActualizarHoras"
-                fullscreen
-                hide-overlay
-                transition="dialog-bottom-transition"
-            >
+                                <v-card
+                                    color="blue"
+                                    max-width="250"
+                                    dark
+                                    class="mt-2 mb-2"
+                                >
+                                    <v-container>
+                                        <p>{{historia.fields.nombre}}</p>
+                                        <p>{{historia.fields.descripcion}}</p>
+                                        <v-btn
+                                        class="ma-2"
+                                        outlined
+                                        small
+                                        color="white"
+                                        @click="openDialogActualizarHoras(historia)"
+                                        ><v-icon>mdi-pencil</v-icon></v-btn>
+                                        <v-btn
+                                        class="ma-2"
+                                        outlined
+                                        small
+                                        color="white"
+                                        :disabled="indexC === 0"
+                                        @click="actualizarHistoriaColumna(false, historia, indexC)"
+                                        ><v-icon>mdi-arrow-left</v-icon></v-btn>
+                                        <v-btn
+                                        class="ma-2"
+                                        outlined
+                                        small
+                                        color="white"
+                                        :disabled="indexC + 1 === columnas.length"
+                                        @click="actualizarHistoriaColumna(true, historia, indexC)"
+                                        ><v-icon>mdi-arrow-right</v-icon></v-btn>
+                                    </v-container>
+                                </v-card>
+
+                            
+                            </div>
+                        </div>
+                    </v-container>
+                </v-col>
+            </v-row>
+
+
+
+
+
+            <v-dialog
+                    v-model="dialogActualizarHoras"
+                    fullscreen
+                    hide-overlay
+                    transition="dialog-bottom-transition"
+                >
                 <v-card>
                     <v-toolbar
                         dark
@@ -87,14 +114,10 @@
 <script>
 import LayoutDefault from '@/layouts/Default.vue';
 import axios from '@/plugins/axios'
-import { debounce } from 'lodash';
-import Kanban from '@/components/Kanban.vue';
 
 
 export default {
     name: '',
-
-    
 
     data() {
         return {
@@ -159,7 +182,6 @@ export default {
     
     components: {
         LayoutDefault,
-        Kanban,
     },
 
     async mounted() {
@@ -304,17 +326,9 @@ export default {
             this.dialogActualizarHoras = true
         },
 
-        updateBlock: debounce(async function (id, status) {
-            const idHistoria = id
-            const nombreColumna = status
+        async actualizarHistoriaColumna(avanzar, historia, posColumna){
 
-            // buscamos la historia
-            const posHistoria = this.historiasUsuarios.map(e => e.pk).indexOf(idHistoria);
-            const historia = this.historiasUsuarios[posHistoria]
-
-            // buscamos la poscision de la columna
-            const posColumna = this.columnasNombres.indexOf(nombreColumna);
-            const columna = this.columnasObjetos[posColumna]
+            const columnaAIr = this.columnasObjetos[avanzar ? posColumna + 1 : posColumna - 1 ]
 
             //actualizamos el estado de la historia
             const idToken = this.$store.state.usuario.idToken
@@ -328,8 +342,8 @@ export default {
 
             const body = {
                 idProyecto: this.idProyecto,
-                idHistoria: idHistoria,
-                estado: columna.pk,
+                idHistoria: historia.pk,
+                estado: columnaAIr.pk,
 
                 nombre: null,
                 descripcion: null,
@@ -344,6 +358,7 @@ export default {
             
             try {
                 const response = await this.axios.put(`/historiasUsuario/`, body, config)
+                this.obtenerHistoriasUsuarios()
             } catch (error) {
                 if (error.response.data.length <= 200) {
                     alert(error.response.data)
@@ -351,8 +366,7 @@ export default {
                     alert("Ha ocurrido un error inesperado")
                 }
             }
-            
-        }, 500),
+        },
     }
 
 }
