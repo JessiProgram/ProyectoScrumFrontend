@@ -44,6 +44,10 @@
             v-on:click="$router.push(`/proyecto/${idProyecto}/configuracion`)">
                 Configurar el Proyecto
             </v-btn>
+            <v-btn v-if="$store.getters['usuario/estaAutenticado'] && $store.getters['usuario/getPermisosProyecto'].includes('actualizar_historia_usuario')" class="blue--text mr-2 mb-2" outlined 
+            v-on:click="$router.push(`/proyecto/${idProyecto}/release`)">
+                Release de Historias
+            </v-btn>
 
             <v-dialog v-model="dialog" width="500">
                 <template v-slot:activator="{ on, attrs }">

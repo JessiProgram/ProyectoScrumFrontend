@@ -12,8 +12,9 @@ export default {
         tokenExpirado: false,
         datosUsuario: null,
         rolesUsuario: [],
-        permisosUsuario: []
-        
+        permisosUsuario: [],
+        proyectoID: -1,
+        permisosProyecto: [],
     },
     getters: {
         getIdToken (state) {
@@ -30,6 +31,12 @@ export default {
         },
         getRolesUsuario (state) {
             return state.rolesUsuario
+        },
+        getProyectoID (state) {
+            return state.proyectoID
+        },
+        getPermisosProyecto(state) {
+            return state.permisosProyecto
         },
         
         // OTROS
@@ -75,6 +82,12 @@ export default {
         },
         setPermisosUsuario (state, permisosUsuario) {
             state.permisosUsuario = permisosUsuario ? permisosUsuario : null
+        },
+        setProyectoID (state, proyectoID) {
+            state.proyectoID = proyectoID ? proyectoID : null
+        },
+        setPermisosProyecto (state, permisosProyecto) {
+            state.permisosProyecto = permisosProyecto ? permisosProyecto : null
         },
     },
     actions: {
@@ -147,6 +160,10 @@ export default {
             commit('setPermisosUsuario', [])
 
             commit('setRolesUsuario', [])
+
+            commit('setProyectoID', -1)
+
+            commit('setPermisosProyecto', [])
 
 
         },

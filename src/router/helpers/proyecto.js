@@ -1,5 +1,7 @@
 import esParticipante from "@/middlewares/esParticipante"
+import esScrumMaster from "@/middlewares/esScrumMaster"
 import autenticado from "../../middlewares/autenticado"
+
 
 
 const rutas = [
@@ -66,6 +68,14 @@ const rutas = [
             middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/sprints/sprints.vue')
+    },
+    {
+        path: '/proyecto/:idProyecto/release', 
+        name: 'release',
+        meta: {
+            middleware: esScrumMaster
+        },
+        component: () => import('@/views/proyecto/_idProyecto/release.vue')
     },
     {
         path: '/proyecto/:idProyecto/sprints/:idSprint', 

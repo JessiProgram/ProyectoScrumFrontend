@@ -512,7 +512,7 @@ export default {
                         
                     }
 
-                    if(element.fields.estado && element.fields.estado  !== 'finalizada' && element.fields.estado !== 'cancelada')
+                    if(element.fields.estado && element.fields.estado  !== 'finalizada' && element.fields.estado !== 'cancelada' && element.fields.estado  !== 'aceptada' && element.fields.estado  !== 'rechazada')
                         await this.obtenerEstado(element.fields.estado, element)
                     else
                         this.sprintBacklog[i].fields.estadoCadena = this.sprintBacklog[i].fields.estado
@@ -543,9 +543,11 @@ export default {
 
                     let pos = this.sprintBacklog.map(e => e.pk).indexOf(historia.pk);
 
-                    if(historia.fields.estado !== 'finalizada' && historia.fields.estado !== 'cancelada' && pos === -1){
-                        if (historia.fields.estado)
+                    if(historia.fields.estado !== 'aceptada' && historia.fields.estado !== 'cancelada' && pos === -1){
+                        if (historia.fields.estado && historia.fields.estado !== 'finalizada' && historia.fields.estado !== 'rechazada')
                             await this.obtenerEstado(historia.fields.estado, historia)
+                        else
+                            historia.fields.estadoCadena = historia.fields.estado
                         listaHistoriasAceptadas.push(historia)
                     }
                 }

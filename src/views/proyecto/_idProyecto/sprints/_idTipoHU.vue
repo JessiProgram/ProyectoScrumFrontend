@@ -24,13 +24,27 @@
                                     class="mt-2 mb-2"
                                 >
                                     <v-container>
-                                        <p>{{historia.fields.nombre}}</p>
+                                        <p>{{historia.fields.nombre}} 
+                                            <abbr title="Aceptada">
+                                                <v-icon v-if="historia.fields.estado === 'aceptada'" 
+                                                color="white" title="Aceptada">
+                                                mdi-checkbox-marked-circle
+                                                </v-icon>
+                                            </abbr>
+                                            <abbr title="Rechazada">
+                                                <v-icon v-if="historia.fields.estado === 'rechazada'" 
+                                                color="white">
+                                                mdi-close-circle
+                                                </v-icon>
+                                            </abbr>
+                                        </p>
                                         <p>{{historia.fields.descripcion}}</p>
                                         <v-btn
                                         class="ma-2"
                                         outlined
                                         small
                                         color="white"
+                                        :disabled="historia.fields.estado === 'aceptada'"
                                         @click="openDialogActualizarHoras(historia)"
                                         ><v-icon>mdi-pencil</v-icon></v-btn>
                                         <v-btn
@@ -38,7 +52,7 @@
                                         outlined
                                         small
                                         color="white"
-                                        :disabled="indexC === 0"
+                                        :disabled="indexC === 0 || historia.fields.estado === 'aceptada'"
                                         @click="actualizarHistoriaColumna(false, historia, indexC)"
                                         ><v-icon>mdi-arrow-left</v-icon></v-btn>
                                         <v-btn
@@ -46,7 +60,7 @@
                                         outlined
                                         small
                                         color="white"
-                                        :disabled="indexC + 1 === columnas.length"
+                                        :disabled="indexC + 1 === columnas.length || historia.fields.estado === 'aceptada'"
                                         @click="actualizarHistoriaColumna(true, historia, indexC)"
                                         ><v-icon>mdi-arrow-right</v-icon></v-btn>
                                     </v-container>
@@ -58,10 +72,6 @@
                     </v-container>
                 </v-col>
             </v-row>
-
-
-
-
 
             <v-dialog
                     v-model="dialogActualizarHoras"
@@ -259,7 +269,9 @@ export default {
 
                         this.historiasUsuarios[i].status = this.columnasNombres[0]
 
-                    } else if (this.historiasUsuarios[i].fields.estado === 'finalizada'){
+                    } else if (this.historiasUsuarios[i].fields.estado === 'finalizada'  || 
+                    this.historiasUsuarios[i].fields.estado === 'aceptada' ||
+                    this.historiasUsuarios[i].fields.estado === 'rechazada'){
 
                         this.historiasUsuarios[i].status = this.columnasNombres[this.columnasNombres.length-1]
 
@@ -274,7 +286,6 @@ export default {
                         const pos = this.columnasObjetos.map(e => e.pk).indexOf(idColumna);
                         this.historiasUsuarios[i].status = this.columnasNombres[pos]
                     }
-                    console.log('this.historiasUsuarios',this.historiasUsuarios)
  
                 }
             } catch (error) {
@@ -359,6 +370,7 @@ export default {
             try {
                 const response = await this.axios.put(`/historiasUsuario/`, body, config)
                 this.obtenerHistoriasUsuarios()
+
             } catch (error) {
                 if (error.response.data.length <= 200) {
                     alert(error.response.data)

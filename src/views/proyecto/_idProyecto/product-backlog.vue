@@ -453,10 +453,12 @@ export default {
                 // get historia de usaurios
                 const res = await axios.get(`/historiasUsuario/listar?idProyecto=${this.idProyecto}`, config)
                 this.listaHistorias = res.data
+
+                console.log('listaHistorias',this.listaHistorias)
                 
                 for (let i = 0; i < this.listaHistorias.length; i++) {
                     const historia = this.listaHistorias[i];
-                    if(historia.fields.estado && historia.fields.estado  !== 'finalizada' && historia.fields.estado !== 'cancelada')
+                    if(historia.fields.estado && historia.fields.estado  !== 'finalizada' && historia.fields.estado !== 'cancelada' && historia.fields.estado !== 'aceptada' && historia.fields.estado !== 'rechazada')
                         await this.obtenerEstado(historia.fields.estado, historia)
                     else
                         historia.fields.estadoCadena = historia.fields.estado
