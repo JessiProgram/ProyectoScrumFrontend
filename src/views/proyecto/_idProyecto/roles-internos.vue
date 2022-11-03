@@ -694,17 +694,12 @@
                 await this.axios.put(`/rol/`, body1, config)
                     
             } catch (error) {
-                if (error.response.data.length <= 200) {
-                alert(error.response.data)
-            } else {
-                alert("Ha ocurrido un error inesperado")
-            }
+                console.log(error)
                 if (error.response.data.length <= 200) {
                     alert(error.response.data)
                 } else {
                     alert("Ha ocurrido un error inesperado")
                 }
-                console.log('error', error)
 
             } finally {
                 this.processing = {

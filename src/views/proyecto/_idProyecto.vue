@@ -48,6 +48,10 @@
             v-on:click="$router.push(`/proyecto/${idProyecto}/release`)">
                 Release de Historias
             </v-btn>
+            <v-btn v-if="$store.getters['usuario/estaAutenticado']" class="blue--text mr-2 mb-2" outlined 
+            v-on:click="$router.push(`/proyecto/${idProyecto}/reportes`)">
+                Reportes
+            </v-btn>
 
             <v-dialog v-model="dialog" width="500">
                 <template v-slot:activator="{ on, attrs }">

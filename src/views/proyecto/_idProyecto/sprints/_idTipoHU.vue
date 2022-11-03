@@ -24,6 +24,7 @@
                                     class="mt-2 mb-2"
                                 >
                                     <v-container>
+
                                         <p>{{historia.fields.nombre}} 
                                             <abbr title="Aceptada">
                                                 <v-icon v-if="historia.fields.estado === 'aceptada'" 
@@ -38,7 +39,9 @@
                                                 </v-icon>
                                             </abbr>
                                         </p>
+
                                         <p>{{historia.fields.descripcion}}</p>
+                                        
                                         <v-btn
                                         class="ma-2"
                                         outlined
@@ -47,26 +50,26 @@
                                         :disabled="historia.fields.estado === 'aceptada'"
                                         @click="openDialogActualizarHoras(historia)"
                                         ><v-icon>mdi-pencil</v-icon></v-btn>
+                                        
                                         <v-btn
                                         class="ma-2"
                                         outlined
                                         small
                                         color="white"
                                         :disabled="indexC === 0 || historia.fields.estado === 'aceptada'"
-                                        @click="actualizarHistoriaColumna(false, historia, indexC)"
+                                        @click="openDialogActividad(false, historia, indexC)"
                                         ><v-icon>mdi-arrow-left</v-icon></v-btn>
+                                        
                                         <v-btn
                                         class="ma-2"
                                         outlined
                                         small
                                         color="white"
                                         :disabled="indexC + 1 === columnas.length || historia.fields.estado === 'aceptada'"
-                                        @click="actualizarHistoriaColumna(true, historia, indexC)"
+                                        @click="openDialogActividad(true, historia, indexC)"
                                         ><v-icon>mdi-arrow-right</v-icon></v-btn>
                                     </v-container>
                                 </v-card>
-
-                            
                             </div>
                         </div>
                     </v-container>
@@ -74,7 +77,7 @@
             </v-row>
 
             <v-dialog
-                    v-model="dialogActualizarHoras"
+                    v-model="dialogActividad"
                     fullscreen
                     hide-overlay
                     transition="dialog-bottom-transition"
@@ -87,7 +90,7 @@
                         <v-btn
                             icon
                             dark
-                            @click="dialogActualizarHoras = false"
+                            @click="cerrarDialogActividades()"
                         >
                             <v-icon>mdi-close</v-icon>
                         </v-btn>
@@ -99,25 +102,21 @@
 
                     <div class="container my-5 px-10">
                         <v-text-field v-model="horas" label="Horas trabajadas" required></v-text-field>
+                        <v-text-field v-model="titulo" label="Titulo de la actividad" required></v-text-field>
+                        <v-text-field v-model="descripcion" label="Descripcion de la actividad" required></v-text-field>
                         <v-btn
-                            @click="actualizarHoras()"
+                            @click="cargarActividad()"
                             class="mt-3 mr-2"
                             outlined
                             color="green"
-                            :disabled="!horas"
+                            :disabled="!horas || !titulo || !descripcion"
                         >
                             Actualizar horas trabajadas
                         </v-btn>
-
                     </div>
-                    
                 </v-card>
             </v-dialog>
-
         </v-container>
-
-
-
     </LayoutDefault>
 </template>
 
@@ -146,6 +145,14 @@ export default {
 
             historiaSleccionada: null,
             dialogActualizarHoras: false,
+
+            dialogActividad: false,
+
+            horas:0,
+            descripcion:'',
+            titulo:'',
+            posColumna: -1,
+            avanzar: false,
 
             items: [
                 {
@@ -184,9 +191,6 @@ export default {
                     href: `/proyecto/${this.$route.params.idProyecto}/sprints/${this.$route.params.idSprint}/tableros/${this.$route.params.idTipoHU}`,
                 },
             ],
-
-            
-            
         }
     },
     
@@ -200,7 +204,6 @@ export default {
         this.idSprint = this.$route.params.idSprint
 
         await this.inicializarLista()
-
     },
 
     methods: {
@@ -292,6 +295,7 @@ export default {
                 console.log("error",error)
             }
         },
+
         async actualizarHoras(){
             //actualizamos el estado de la historia
             const idToken = this.$store.state.usuario.idToken
@@ -331,15 +335,65 @@ export default {
             }
         },
 
-        openDialogActualizarHoras(historia){
+
+        openDialogActividad(avanzar, historia, posColumna){
             this.historiaSleccionada = historia
             this.horas = historia.fields.horas_trabajadas
-            this.dialogActualizarHoras = true
+            this.dialogActividad = true
+            this.avanzar = avanzar
+            this.posColumna = posColumna
         },
 
-        async actualizarHistoriaColumna(avanzar, historia, posColumna){
+        async cargarActividad(){
+            
+            if(!this.avanzar) return
+            console.log('aaaaaaaaaa')
+            // llamamos a la api
+            const idToken = this.$store.state.usuario.idToken
 
-            const columnaAIr = this.columnasObjetos[avanzar ? posColumna + 1 : posColumna - 1 ]
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}`
+                }
+            }
+
+            const body = {
+                titulo: this.titulo,
+                descripcion: this.descripcion,
+                idHistoria: this.historiaSleccionada.pk,
+                horasTrabajadas: this.horas,
+                idProyecto: this.idProyecto,
+                idSprint: this.idSprint,
+            }
+            
+            try {
+                const response = await this.axios.post(`/historiasUsuario/actividad`, body, config)
+                this.actualizarHistoriaColumna()
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
+        
+            
+        },
+
+        cerrarDialogActividades(){
+            this.horas='';
+            this.descripcion='';
+            this.titulo='';
+            this.dialogActividad = false
+            this.historiaSleccionada = null
+            this.posColumna = -1
+            this.avanzar = false
+        },
+
+        async actualizarHistoriaColumna(){
+
+            const columnaAIr = this.columnasObjetos[this.avanzar ? this.posColumna + 1 : this.posColumna - 1 ]
 
             //actualizamos el estado de la historia
             const idToken = this.$store.state.usuario.idToken
@@ -353,7 +407,7 @@ export default {
 
             const body = {
                 idProyecto: this.idProyecto,
-                idHistoria: historia.pk,
+                idHistoria: this.historiaSleccionada.pk,
                 estado: columnaAIr.pk,
 
                 nombre: null,

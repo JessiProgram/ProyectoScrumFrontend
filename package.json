@@ -13,6 +13,7 @@
     "register-service-worker": "^1.7.2",
     "vue": "^2.6.14",
     "vue-axios": "^3.4.1",
+    "vue-chartjs": "^4.1.2",
     "vue-kanban": "^1.8.0",
     "vue-router": "^3.5.1",
     "vue-router-middleware-plugin": "^3.1.1",

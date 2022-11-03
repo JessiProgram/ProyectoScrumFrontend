@@ -36,7 +36,12 @@ export const codigosPermisosInternos = [
     'proyectos.borrar_miembro_sprint',
     'proyectos.borrar_historia_sprintbacklog',
     'proyectos.agregar_historia_sprintbacklog',
-
+    'proyectos.restaurar_historia_usuario',
+    'proyectos.obtener_actividad_historia_usuario',
+    'proyectos.eliminar_actividad_historia_usuario',
+    'proyectos.crear_actividad_historia_usuario',
+    'proyectos.listar_actividad_historia_usuario',
+    'proyectos.generar_burndown_chart'
 ]
 
 export const nombresPermisosInternos = [
@@ -77,4 +82,10 @@ export const nombresPermisosInternos = [
     'Borrar miembro de equipo sprint',
     'Borrar historia de usuario al sprintbacklog',
     'Agregar historias de usuario al sprintbacklog',
+    'Restaurar historia de usuario',
+    'Obtener actividad de historia de usuario',
+    'Eliminar actividad de historia de usuario',
+    'Crear actividad de historia usuario',
+    'Listar actividad de historia de usuario',
+    'Generar Burndown Chart'
 ]

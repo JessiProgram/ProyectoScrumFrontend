@@ -28,6 +28,6 @@ export default {
 <style scoped>
 .layoutDefault__main {
     margin-top: 50px;
-    margin-bottom: 50px;
+    margin-bottom: 100px;
 }
 </style>

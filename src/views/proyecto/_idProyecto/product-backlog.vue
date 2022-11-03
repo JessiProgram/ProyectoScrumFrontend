@@ -51,6 +51,12 @@
                         <td>{{ historia.fields.estadoCadena }}</td>
                         <td>
                             <v-btn class="mr-3" fab dark x-small color="green"
+                                @click="$router.push(`/proyecto/${idProyecto}/historial/${historia.pk}`)">
+                                <v-icon dark>
+                                    mdi-history
+                                </v-icon>
+                            </v-btn>
+                            <v-btn class="mr-3" fab dark x-small color="green"
                                 @click="openDialogActualizar(historia)">
                                 <v-icon dark>
                                     mdi-pencil
@@ -604,6 +610,7 @@ export default {
                 }
             }
         },
+
 
         openDialogActualizar(data){
             

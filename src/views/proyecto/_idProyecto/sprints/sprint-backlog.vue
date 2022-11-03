@@ -703,6 +703,8 @@ export default {
             try {
                 const response = await this.axios.put(`/historiasUsuario/`, body, config)
                 this.obtenerSprintBacklog()
+                this.verificarMiembrosAsignados()
+
                 alert("Historia de usuario actualizada")
             } catch (error) {
                 if (error.response.data.length <= 200) {
@@ -737,6 +739,7 @@ export default {
             
             this.dialogActualizacion = true
         },
+
         async aceptarIniciar(){
             await this.avanzarSprint()
             this.dialogWarningIniciar = false;
@@ -775,6 +778,7 @@ export default {
                 }
             }
         },
+
         verificarMiembro(email){
             let flag = true
             if(!email){ 
@@ -786,8 +790,7 @@ export default {
             }
             return flag
         }
-            
-        
+
     }
 }
     

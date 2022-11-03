@@ -70,6 +70,22 @@ const rutas = [
         component: () => import('@/views/proyecto/_idProyecto/sprints/sprints.vue')
     },
     {
+        path: '/proyecto/:idProyecto/reportes', 
+        name: 'reportes',
+        meta: {
+            middleware: esParticipante
+        },
+        component: () => import('@/views/proyecto/_idProyecto/reportes.vue')
+    },
+    {
+        path: '/proyecto/:idProyecto/historial/:idHistoria', 
+        name: 'historial',
+        meta: {
+            middleware: esParticipante
+        },
+        component: () => import('@/views/proyecto/_idProyecto/historialHistoria.vue')
+    },
+    {
         path: '/proyecto/:idProyecto/release', 
         name: 'release',
         meta: {
