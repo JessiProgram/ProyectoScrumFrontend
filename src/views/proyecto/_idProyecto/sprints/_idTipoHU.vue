@@ -65,7 +65,7 @@
                                         outlined
                                         small
                                         color="white"
-                                        :disabled="indexC + 1 === columnas.length || historia.fields.estado === 'aceptada'"
+                                        :disabled="indexC + 1 === columnasNombres.length || historia.fields.estado === 'aceptada'"
                                         @click="openDialogActividad(true, historia, indexC)"
                                         ><v-icon>mdi-arrow-right</v-icon></v-btn>
                                     </v-container>
