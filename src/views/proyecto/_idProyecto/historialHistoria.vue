@@ -156,7 +156,12 @@ export default {
                     href: `/proyecto/${this.$route.params.idProyecto}`,
                 },
                 {
-                    text: 'Configuración',
+                    text: `Product Backlog`,
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}/product-backlog`,
+                },
+                {
+                    text: `Historial ${this.$route.params.idHistoria}`,
                     disabled: true,
                     href: '/configuracion',
                 },

@@ -118,8 +118,13 @@ export default {
                 },
                 {
                     text: 'Product Backlog',
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}/product-backlog`,
+                },
+                {
+                    text: `Historia ${this.$route.params.idHistoria}`,
                     disabled: true,
-                    href: '/product-backlog',
+                    href: `/proyecto/${this.$route.params.idProyecto}/product-backlog/${this.$route.params.idHistoria}`,
                 },
             ],
 

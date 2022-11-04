@@ -26,7 +26,7 @@
                                 Participante
                             </th>
                             <th class="text-left">
-                                Restaurar Historia
+                                Eliminar esta actividad
                             </th>
                         </tr>
                     </thead>
@@ -146,10 +146,16 @@ export default {
                     href: `/proyecto/${this.$route.params.idProyecto}`,
                 },
                 {
-                    text: 'Configuración',
-                    disabled: true,
-                    href: '/configuracion',
+                    text: `Product Backlog`,
+                    disabled: false,
+                    href: `/proyecto/${this.$route.params.idProyecto}/product-backlog`,
                 },
+                {
+                    text: `Actividad ${this.$route.params.idHistoria}`,
+                    disabled: true,
+                    href: `/proyecto/${this.$route.params.idProyecto}/product-backlog/actividades/${this.$route.params.idHistoria}`,
+                },
+                
             ],
         }
     },

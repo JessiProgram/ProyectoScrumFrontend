@@ -162,9 +162,9 @@ export default {
                     href: `/proyecto/${this.$route.params.idProyecto}`,
                 },
                 {
-                    text: 'Product Backlog',
+                    text: `Release`,
                     disabled: true,
-                    href: '/product-backlog',
+                    href: `/proyecto/${this.$route.params.idProyecto}/release`,
                 },
             ],
         }

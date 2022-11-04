@@ -86,7 +86,7 @@ const rutas = [
         component: () => import('@/views/proyecto/_idProyecto/reportes.vue')
     },
     {
-        path: '/proyecto/:idProyecto/actividades/:idHistoria', 
+        path: '/proyecto/:idProyecto/product-backlog/actividades/:idHistoria', 
         name: 'actividades',
         meta: {
             middleware: esParticipante
@@ -94,7 +94,7 @@ const rutas = [
         component: () => import('@/views/proyecto/_idProyecto/actividades.vue')
     },
     {
-        path: '/proyecto/:idProyecto/historial/:idHistoria', 
+        path: '/proyecto/:idProyecto/product-backlog/historial/:idHistoria', 
         name: 'historial',
         meta: {
             middleware: esParticipante
