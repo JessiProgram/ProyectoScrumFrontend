@@ -51,6 +51,18 @@
                         <td>{{ historia.fields.estadoCadena }}</td>
                         <td>
                             <v-btn class="mr-3" fab dark x-small color="green"
+                                @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)">
+                                <v-icon dark>
+                                    mdi-eye
+                                </v-icon>
+                            </v-btn>
+                            <v-btn class="mr-3" fab dark x-small color="green"
+                                @click="$router.push(`/proyecto/${idProyecto}/actividades/${historia.pk}`)">
+                                <v-icon dark>
+                                    mdi-format-list-checks
+                                </v-icon>
+                            </v-btn>
+                            <v-btn class="mr-3" fab dark x-small color="green"
                                 @click="$router.push(`/proyecto/${idProyecto}/historial/${historia.pk}`)">
                                 <v-icon dark>
                                     mdi-history
@@ -172,6 +184,36 @@
                             Crear Historia de Usuario
                         </v-btn>
                     </div>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog
+            v-model="dialogVer"
+            v-if="historiaSeleccionada"
+            fullscreen
+            hide-overlay
+            transition="dialog-bottom-transition"
+            >
+                <v-card>
+                    <v-toolbar
+                        dark
+                        color="primary"
+                    >
+                        <v-btn
+                            icon
+                            dark
+                            @click="dialogVer = false"
+                        >
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                        <v-toolbar-title>
+                            Historia de Usuario
+                        </v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-toolbar-items>
+                        </v-toolbar-items>
+                    </v-toolbar>
+                    <Historia :historiaSeleccionada="historiaSeleccionada"></Historia>
                 </v-card>
             </v-dialog>
 
@@ -367,6 +409,8 @@ export default {
             historiaSeleccionada: null,
             datosActualizarHistoria: {},
 
+            dialogVer: false,
+
             dialogEliminar: false,
             confirmacionEliminacion:'',
 
@@ -396,7 +440,7 @@ export default {
     },
 
     components: {
-        LayoutDefault,
+        LayoutDefault
     },
 
     async mounted() {
@@ -416,7 +460,7 @@ export default {
         this.inicializarLista()
 
         try {
-              // get lista de participantes
+            // get lista de participantes
             const responseParticipantes = await axios.get(`/proyecto/listar-participantes?idproyecto=${this.idProyecto}`, config)
             this.listaParticipantes = responseParticipantes.data
             console.log("listaParticipantes",this.listaParticipantes)
@@ -435,6 +479,7 @@ export default {
             for (const tipoHU of this.listaTiposHU) 
                 this.listaTiposHUNombres.push(tipoHU.fields.nombre)   
         } catch (error) {
+            console.log(error)
             if (error.response.data.length <= 200) {
                 alert(error.response.data)
             } else {
@@ -633,6 +678,11 @@ export default {
 
         openDialogEliminar(data){
             this.dialogEliminar = true
+            this.historiaSeleccionada = data
+        },
+
+        openDialogVer(data){
+            this.dialogVer = true
             this.historiaSeleccionada = data
         },
 

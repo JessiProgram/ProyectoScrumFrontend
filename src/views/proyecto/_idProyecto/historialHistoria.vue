@@ -73,7 +73,7 @@
                                     @click="openDialogRestaurarHistoria(item)"
                                 >
                                     <v-icon dark>
-                                        mdi-pencil
+                                        mdi-restore
                                     </v-icon>
                                 </v-btn>
                             </td>

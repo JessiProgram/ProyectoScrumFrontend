@@ -55,7 +55,7 @@ export default async ({ to, from, redirect }) => {
         }
         
         const permisosInternos = store.getters['usuario/getPermisosProyecto']
-    
+        
         console.log('permisosInternos',permisosInternos)
         if(!permisosInternos.includes('actualizar_historia_usuario')) redirect('/')
         console.log('permisosInternos.includes(actualizar_historia_usuario)',permisosInternos.includes('actualizar_historia_usuario'))

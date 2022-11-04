@@ -48,8 +48,8 @@
                                         small
                                         color="white"
                                         :disabled="historia.fields.estado === 'aceptada'"
-                                        @click="openDialogActualizarHoras(historia)"
-                                        ><v-icon>mdi-pencil</v-icon></v-btn>
+                                        @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)"
+                                        ><v-icon>mdi-eye</v-icon></v-btn>
                                         
                                         <v-btn
                                         class="ma-2"
@@ -95,7 +95,7 @@
                             <v-icon>mdi-close</v-icon>
                         </v-btn>
                         <v-toolbar-title>
-                            Actualizar horas trabajadas
+                            Agregar Actividad Realizada
                         </v-toolbar-title>
                         <v-spacer></v-spacer>
                     </v-toolbar>
@@ -140,8 +140,6 @@ export default {
             columnasObjetos: [],
             columnasNombres: [],
             historiasUsuarios: [],
-
-            horas: 0,
 
             historiaSleccionada: null,
             dialogActualizarHoras: false,
@@ -296,58 +294,22 @@ export default {
             }
         },
 
-        async actualizarHoras(){
-            //actualizamos el estado de la historia
-            const idToken = this.$store.state.usuario.idToken
-
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}`
-                }
-            }
-
-            const body = {
-                idProyecto: this.idProyecto,
-                idHistoria: this.historiaSleccionada.pk,
-                estado: null,
-                nombre: null,
-                descripcion: null,
-                prioridad_tecnica: null,
-                prioridad_negocio: null,
-                estimacion_horas: null,
-                idTipo: null,
-                idParticipante: null,
-                horas_trabajadas: this.horas,
-                estimacion: null,
-            }
-            
-            try {
-                const response = await this.axios.put(`/historiasUsuario/`, body, config)
-                this.historiaSleccionada.fields.horas_trabajadas = this.horas
-                alert("Horas actualizadas")
-            } catch (error) {
-                if (error.response.data.length <= 200) {
-                    alert(error.response.data)
-                } else {
-                    alert("Ha ocurrido un error inesperado")
-                }
-            }
-        },
-
 
         openDialogActividad(avanzar, historia, posColumna){
             this.historiaSleccionada = historia
-            this.horas = historia.fields.horas_trabajadas
-            this.dialogActividad = true
+            this.horas = 0
             this.avanzar = avanzar
             this.posColumna = posColumna
+            if(!this.avanzar) {
+                this.actualizarHistoriaColumna()
+                return
+            }
+            this.dialogActividad = true
         },
 
         async cargarActividad(){
             
             if(!this.avanzar) return
-            console.log('aaaaaaaaaa')
             // llamamos a la api
             const idToken = this.$store.state.usuario.idToken
 
@@ -362,7 +324,7 @@ export default {
                 titulo: this.titulo,
                 descripcion: this.descripcion,
                 idHistoria: this.historiaSleccionada.pk,
-                horasTrabajadas: this.horas,
+                horasTrabajadas: Number(this.horas),
                 idProyecto: this.idProyecto,
                 idSprint: this.idSprint,
             }
@@ -371,6 +333,7 @@ export default {
                 const response = await this.axios.post(`/historiasUsuario/actividad`, body, config)
                 this.actualizarHistoriaColumna()
             } catch (error) {
+                console.log(error)
                 if (error.response.data.length <= 200) {
                     alert(error.response.data)
                 } else {
@@ -382,7 +345,7 @@ export default {
         },
 
         cerrarDialogActividades(){
-            this.horas='';
+            this.horas=0;
             this.descripcion='';
             this.titulo='';
             this.dialogActividad = false
@@ -424,6 +387,7 @@ export default {
             try {
                 const response = await this.axios.put(`/historiasUsuario/`, body, config)
                 this.obtenerHistoriasUsuarios()
+                this.cerrarDialogActividades()
 
             } catch (error) {
                 if (error.response.data.length <= 200) {

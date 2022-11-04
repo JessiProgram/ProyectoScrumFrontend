@@ -39,7 +39,7 @@
                             <v-btn class="mr-3" fab dark x-small color="green" 
                             :disabled="historia.fields.estado == 'cancelada'
                             || proyecto.fields.estado === 'cancelado'"
-                            @click="openDialogVerHistoria(false)" placeholder="Rechazar">
+                            @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)">
                                 <v-icon dark>
                                     mdi-eye
                                 </v-icon>

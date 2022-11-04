@@ -702,7 +702,7 @@ export default {
             
             try {
                 const response = await this.axios.put(`/historiasUsuario/`, body, config)
-                this.obtenerSprintBacklog()
+                await this.obtenerSprintBacklog()
                 this.verificarMiembrosAsignados()
 
                 alert("Historia de usuario actualizada")

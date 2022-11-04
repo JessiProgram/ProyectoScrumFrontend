@@ -54,6 +54,14 @@ const rutas = [
         component: () => import('@/views/proyecto/_idProyecto/product-backlog.vue')
     },
     {
+        path: '/proyecto/:idProyecto/product-backlog/:idHistoria', 
+        name: 'historia',
+        meta: {
+            middleware: esParticipante
+        },
+        component: () => import('@/views/proyecto/_idProyecto/Historia.vue')
+    },
+    {
         path: '/proyecto/:idProyecto/tipo-historias-usuarios', 
         name: 'tipoHistoriasUsuario',
         meta: {
@@ -76,6 +84,14 @@ const rutas = [
             middleware: esParticipante
         },
         component: () => import('@/views/proyecto/_idProyecto/reportes.vue')
+    },
+    {
+        path: '/proyecto/:idProyecto/actividades/:idHistoria', 
+        name: 'actividades',
+        meta: {
+            middleware: esParticipante
+        },
+        component: () => import('@/views/proyecto/_idProyecto/actividades.vue')
     },
     {
         path: '/proyecto/:idProyecto/historial/:idHistoria', 

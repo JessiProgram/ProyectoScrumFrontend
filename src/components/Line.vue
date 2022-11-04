@@ -87,9 +87,9 @@ export default {
             datasets: [
                 {
                     label: 'Puntos de historia',
-                    backgroundColor: '#f87979',
+                    backgroundColor: 'green',
                     data: this.dataY,
-                    borderColor: '#f87979',
+                    borderColor: 'green',
                     pointStyle: 'circle',
                     pointRadius: 10,
                     pointHoverRadius: 15
