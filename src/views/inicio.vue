@@ -7,7 +7,7 @@
                     <h3>
                         <div v-if="$store.state.usuario.permisosUsuario.includes('crear_rol_externo')">Bienvenido ADMIN</div> 
                         <div v-else-if="$store.state.usuario.rolesUsuario.length !== 0">Bienvenido</div> 
-                        <div v-else-if="$store.state.usuario.rolesUsuario.length === 0">Bienvenido INVITADO, comuniquese a la administracion en proyectoscrum@gmail.com para formar parte de los usuarios</div> 
+                        <div v-else-if="$store.state.usuario.rolesUsuario.length === 0">Bienvenido INVITADO, comuniquese a la administracion en proyectoscrum5@gmail.com para formar parte de los usuarios</div> 
                     </h3>
                 </div>
                 <v-btn class="blue lighten-2 mt-5" dark large to="/proyectos">

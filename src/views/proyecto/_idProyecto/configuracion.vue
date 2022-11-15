@@ -279,6 +279,30 @@ export default {
                     alert("Ha ocurrido un error inesperado")
                 }
             }
+        },
+
+        async buscarCorreo(idParticipante){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+            
+            try {
+                const res = await this.axios.get(`/proyecto/participantes?idParticipante=${idParticipante}`, config)
+
+                let usuario = res.data[0]
+          
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
         }
     }
     

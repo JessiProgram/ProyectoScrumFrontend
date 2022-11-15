@@ -38,7 +38,7 @@
                             <td>{{ item.fields.titulo }}</td>
                             <td>{{ item.fields.descripcion }}</td>
                             <td>{{ item.fields.horasTrabajadas }}</td>
-                            <td>{{ item.fields.participante }}</td>
+                            <td>{{ correo }}</td>
                             <td>
                                 <v-btn
                                     class="mr-3"
@@ -123,6 +123,7 @@ export default {
             idHistoria: -1,
             actividades: [],
 
+            correo: '',
             dialogEliminacion: false,
 
             actividadSeleccionada: null,
@@ -216,6 +217,8 @@ export default {
 
                 this.actividades = res.data
 
+                this.buscarCorreo(this.actividades[0].fields.participante)
+
             } catch (error) {
                 console.log(error)
                 if (error.response.data.length <= 200) {
@@ -261,6 +264,30 @@ export default {
 
             } 
 
+        },
+        async buscarCorreo(idParticipante){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+            
+            try {
+                const res = await this.axios.get(`/participantes/?idParticipante=${idParticipante}`, config)
+
+                let usuario = res.data[0]
+          
+                this.correo = usuario.fields.email
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
         }
     },
 

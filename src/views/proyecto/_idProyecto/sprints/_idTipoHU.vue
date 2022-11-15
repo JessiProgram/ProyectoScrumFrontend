@@ -51,6 +51,16 @@
                                         @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)"
                                         ><v-icon>mdi-eye</v-icon></v-btn>
                                         
+                                        <v-btn class="ma-2"
+                                        outlined
+                                        small
+                                        color="white"
+                                            @click="$router.push(`/proyecto/${idProyecto}/product-backlog/actividades/${historia.pk}`)">
+                                            <v-icon>
+                                                mdi-format-list-checks
+                                            </v-icon>
+                                        </v-btn>
+
                                         <v-btn
                                         class="ma-2"
                                         outlined
@@ -110,6 +120,7 @@
                             outlined
                             color="green"
                             :disabled="!horas || !titulo || !descripcion"
+                            :loading="inicioCarga"
                         >
                             Actualizar horas trabajadas
                         </v-btn>
@@ -136,6 +147,8 @@ export default {
             proyecto: null,
 
             tipoHU: null,
+
+            inicioCarga: false,
 
             columnasObjetos: [],
             columnasNombres: [],
@@ -310,6 +323,8 @@ export default {
         async cargarActividad(){
             
             if(!this.avanzar) return
+
+            this.inicioCarga = true
             // llamamos a la api
             const idToken = this.$store.state.usuario.idToken
 
@@ -331,7 +346,8 @@ export default {
             
             try {
                 const response = await this.axios.post(`/historiasUsuario/actividad`, body, config)
-                this.actualizarHistoriaColumna()
+                await this.actualizarHistoriaColumna()
+                this.inicioCarga = false
             } catch (error) {
                 console.log(error)
                 if (error.response.data.length <= 200) {
@@ -339,6 +355,7 @@ export default {
                 } else {
                     alert("Ha ocurrido un error inesperado")
                 }
+                this.inicioCarga = false
             }
         
             
