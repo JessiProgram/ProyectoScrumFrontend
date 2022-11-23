@@ -48,6 +48,12 @@
         </v-row>
         <v-row class="mt-3 mb-3">
             <v-col>
+                <h4>Prioridad Final:</h4>
+                <v-divider class="mb-5" />
+                <v-text-field v-model="historia.fields.prioridad_final"
+                    label="Estado" required :readonly="true"></v-text-field>
+            </v-col>
+            <v-col>
                 <h4>Estado:</h4>
                 <v-divider class="mb-5" />
                 <v-text-field v-model="historia.fields.estadoCadena"

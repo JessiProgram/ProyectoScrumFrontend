@@ -16,7 +16,7 @@
                     large
                     color="blue"
                     class="mb-10"
-                    :disabled="proyecto.fields.estado === 'cancelado'"
+                    :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                     @click="dialogCreacion = true"
                 >
                     <v-icon left>
@@ -76,7 +76,8 @@
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="red" 
                             :disabled="historia.fields.estado == 'cancelada'
-                            || proyecto.fields.estado === 'cancelado'"
+                            || proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'"
                             @click="openDialogEliminar(historia)">
                                 <v-icon dark>
                                     mdi-delete
@@ -322,7 +323,8 @@
                         </v-row>
                         <v-btn
                             @click="actualizarHistoria()"
-                            :disabled="proyecto.fields.estado === 'cancelado'"
+                            :disabled="proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'"
                             class="mt-3 mr-2 mb-4"
                             outlined
                             color="green"

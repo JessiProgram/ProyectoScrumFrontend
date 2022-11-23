@@ -14,7 +14,8 @@
 
             <div class="container text-right">
                 <v-btn outlined 
-                :disabled="!nombre || proyecto.fields.estado === 'cancelado'" 
+                :disabled="!nombre || proyecto.fields.estado === 'cancelado'
+                || proyecto.fields.estado === 'Finalizado'" 
                 @click="crear()" @loading="creando" color="indigo">
                     Crear Tipo Historia Usuario
                 </v-btn>
@@ -50,7 +51,8 @@
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="red" 
-                            :disabled="proyecto.fields.estado === 'cancelado'"
+                            :disabled="proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'"
                             @click="openDialogEliminarTipoHU(tipoHU)">
                                 <v-icon dark>
                                     mdi-delete
@@ -62,7 +64,8 @@
             </v-simple-table>
             <h4 class="mt-7">Buscar e importar Tipo de Historia de Usuario de otros proyectos</h4>
             <v-btn outlined 
-            :disabled="proyecto.fields.estado === 'cancelado'"
+            :disabled="proyecto.fields.estado === 'cancelado'
+            || proyecto.fields.estado === 'Finalizado'"
             @click="openDialogImportar()" color="indigo" class="mt-4 mb-5">
                 Buscar e Importar
             </v-btn>

@@ -62,7 +62,13 @@
                             <td>{{ item.fields.prioridad_final }}</td>
                             <td>{{ item.fields.estado }}</td>
                             <td>{{ item.fields.tipo_historia_usuario }}</td>
-                            <td>{{ item.fields.desarrollador_asignado }}</td>
+                            <td v-if="!Number(item.fields.desarrollador_asignado)">{{ item.fields.desarrollador_asignado }}</td>
+                            <td v-else>
+                                <v-progress-linear
+                                indeterminate
+                                color="teal"
+                                ></v-progress-linear>
+                            </td>
                             <td>
                                 <v-btn
                                     class="mr-3"
@@ -70,6 +76,7 @@
                                     dark
                                     x-small
                                     color="green"
+                                    :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                                     @click="openDialogRestaurarHistoria(item)"
                                 >
                                     <v-icon dark>
@@ -226,6 +233,14 @@ export default {
 
             this.historial = res.data
 
+            for (let i = 0; i < this.historial.length; i++) {
+                const element = this.historial[i];
+                if(element.fields.desarrollador_asignado)
+                    element.fields.desarrollador_asignado = await this.buscarCorreo(element.fields.desarrollador_asignado)
+            }
+
+            this.historial = Object.assign({}, this.historial)
+
         } catch (error) {
             console.log(error)
             if (error.response.data.length <= 200) {
@@ -275,6 +290,30 @@ export default {
 
             
 
+        },
+        async buscarCorreo(idParticipante){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+            
+            try {
+                const res = await this.axios.get(`/participantes/?idParticipante=${idParticipante}`, config)
+
+                let usuario = res.data[0]
+          
+                return usuario.fields.email
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
         }
     },
 

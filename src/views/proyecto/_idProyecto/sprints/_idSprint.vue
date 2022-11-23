@@ -11,6 +11,7 @@
             <h3>Datos de Sprint</h3>
             <div v-if="sprint">
                 <v-btn class="blue--text mr-2 mb-2" outlined 
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('agregar_miembro_sprint')"
                 :disabled="sprint.fields.estado !== 'Planificación'"
                 v-on:click="dialogAgregarMiembro=true">
                     Agregar Miembro
@@ -26,14 +27,15 @@
                     Ver Tableros
                 </v-btn>
                 <v-btn class="blue--text mr-2 mb-2" outlined 
-                v-if="sprint.fields.estado === 'Creado'"
+                
+                v-if="sprint.fields.estado === 'Creado' && $store.getters['usuario/getPermisosProyecto'].includes('actualizar_sprint')"
                 v-on:click="avanzarSprint()"
                 >
                     Planificar Sprint
                 </v-btn>
 
                 <v-btn class="blue--text mr-2 mb-2" outlined 
-                v-if="sprint.fields.estado === 'En Ejecución'"
+                v-if="sprint.fields.estado === 'En Ejecución' && $store.getters['usuario/getPermisosProyecto'].includes('actualizar_sprint')" 
                 v-on:click="avanzarSprint()"
                 >
                     Finalizar Sprint
@@ -88,7 +90,7 @@
             <div class="container text-right">
                     <v-btn 
                     outlined 
-                    v-if="sprint"
+                    v-if="sprint && $store.getters['usuario/getPermisosProyecto'].includes('actualizar_sprint')"
                     :disabled="estaDeshabilitadoActualizar()" 
                     @click="actualizarSprint()" 
                     color="indigo">

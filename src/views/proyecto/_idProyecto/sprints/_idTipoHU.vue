@@ -19,7 +19,6 @@
 
                                 <v-card
                                     color="blue"
-                                    max-width="250"
                                     dark
                                     class="mt-2 mb-2"
                                 >

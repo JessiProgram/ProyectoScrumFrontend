@@ -13,7 +13,8 @@
                 <v-text-field v-model="nombreTipoHU" label="Nombre Tipo Historia Usuario"></v-text-field>
                 <div class="container text-right">
                     <v-btn outlined 
-                    :disabled="!nombreTipoHU || nombreTipoHU === tipoHU.fields.nombre || proyecto.fields.estado === 'cancelado'" 
+                    :disabled="!nombreTipoHU || nombreTipoHU === tipoHU.fields.nombre || proyecto.fields.estado === 'cancelado'
+                    || proyecto.fields.estado === 'Finalizado'" 
                     @click="actualizarTipoHU()" @loading="creando" color="indigo" class="mb-5">
                         Actualizar Nombre
                     </v-btn>
@@ -27,7 +28,8 @@
                 <v-btn outlined 
                 :disabled="!nombre || 
                 (columnaSeleccionada && columnaSeleccionada.fields.nombre === nombre)
-                || proyecto.fields.estado === 'cancelado'" 
+                || proyecto.fields.estado === 'cancelado'
+                || proyecto.fields.estado === 'Finalizado'" 
                 @click="crear()" @loading="creando" color="indigo">
                     <div v-if="!esActualizar">Agregar columna</div><div v-else>Actualizar columna</div>
                 </v-btn>
@@ -57,28 +59,31 @@
                         <td>
                             <v-btn class="mr-3" fab dark x-small color="blue"
                                 :disabled="deshabilitarCambio || index === 0 || 
-                                proyecto.fields.estado === 'cancelado'"
+                                proyecto.fields.estado === 'cancelado'
+                                || proyecto.fields.estado === 'Finalizado'"
                                 @click="actualizarOrden(columna, columna.fields.orden , false)">
                                 <v-icon dark>
                                     mdi-arrow-up-thick
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="blue"
-                                :disabled="deshabilitarCambio || index === columnas.length-1 || proyecto.fields.estado === 'cancelado'"
+                                :disabled="deshabilitarCambio || index === columnas.length-1 || proyecto.fields.estado === 'cancelado'
+                                || proyecto.fields.estado === 'Finalizado'"
                                 @click="actualizarOrden(columna, columna.fields.orden , true)">
                                 <v-icon dark>
                                     mdi-arrow-down-thick
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="green" 
-                            :disabled="proyecto.fields.estado === 'cancelado'"
+                            :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                                 @click="openDialogActualizarTipoHU(columna)">
                                 <v-icon dark>
                                     mdi-pencil
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="red" @click="openDialogEliminarTipoHU(columna)" 
-                            :disabled="columnas.length <=3 || proyecto.fields.estado === 'cancelado'">
+                            :disabled="columnas.length <=3 || proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'">
                                 <v-icon dark>
                                     mdi-delete
                                 </v-icon>

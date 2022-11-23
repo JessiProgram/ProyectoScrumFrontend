@@ -65,7 +65,8 @@
                 :disabled="!nombre || !descripcion || (
                     proyecto.fields.nombre === nombre &&
                     proyecto.fields.descripcion === descripcion)
-                    || proyecto.fields.estado === 'cancelado'"
+                    || proyecto.fields.estado === 'cancelado'
+                    || proyecto.fields.estado === 'Finalizado'"
                 @click="actualizar()"
                 color="indigo">
                 Actualizar Proyecto
@@ -74,12 +75,20 @@
 
             <h4>Ajustes</h4>
             <v-btn
-            class="mt-2"
+            class="mt-2 mr-2"
             outlined
-            :disabled="proyecto.fields.estado === 'cancelado'"
+            :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
             @click="dialogEliminarProyecto=true"
             color="red">
             Cancelar Proyecto
+            </v-btn>
+            <v-btn
+            class="mt-2"
+            outlined
+            :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
+            @click="dialogFinalizarProyecto=true"
+            color="green">
+            Finalizar Proyecto
             </v-btn>
 
             <!-- dialog de eliminar-->
@@ -137,6 +146,41 @@
                 </v-card>
             </v-dialog>
 
+            <!-- dialog de eliminar-->
+            <v-dialog
+                v-model="dialogFinalizarProyecto"
+                v-if="proyecto"
+                max-width="800px"
+            >
+                <v-card>
+                    <v-card-title class="informacionAccionF textoInformacionAccionF">
+                        ¿Quieres finalizar este Proyecto?
+                    </v-card-title>
+                    <v-card-text class="informacionAccionF textoInformacionAccionF">
+                        Esta acción finalizara el Proyecto de forma permanente y queda en modo lectura para sus participantes.
+                    </v-card-text>
+
+                    <v-card-actions class="d-flex flex-row-reverse pb-5 pt-5">
+                        <v-btn
+                            class="ml-4 mr-3"
+                            color="green"
+                            text
+                            @click="finalizarProyecto()"
+                        >
+                            Finalizar Proyecto
+                        </v-btn>
+
+                        <v-btn
+                            color="grey darken-2"
+                            text
+                            @click="dialogFinalizarProyecto = false"
+                        >
+                            Cerrar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
         </v-container>
     </LayoutDefault>
 </template>
@@ -186,6 +230,8 @@ export default {
             dialogEliminarProyecto: false,
             mensajeCancelacion: '',
 
+            dialogFinalizarProyecto: false,
+
         }
     },
     components: {
@@ -193,40 +239,43 @@ export default {
     },
     async mounted() {
         this.idProyecto = this.$route.params.idProyecto
-        let idToken = this.$store.state.usuario.idToken
-
-
-        // Llamamos al backend
-        let config = {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${idToken}`
-            }
-        }
-
-        try {
-            let res = await axios.get(`proyecto/?q=${this.idProyecto}`, config)
-
-            let proyecto = res.data[0]
-            this.proyecto = proyecto
-
-            this.nombre = proyecto.fields.nombre
-            this.descripcion = proyecto.fields.descripcion
-            this.fechaInicio = proyecto.fields.fechaInicio ? new Date(proyecto.fields.fechaInicio).toLocaleString() : null
-            this.fechaFin = proyecto.fields.fechaFin ? new Date(proyecto.fields.fechaFin).toLocaleString() : null
-            this.estado = proyecto.fields.estado
-            this.scrumMaster = proyecto.fields.scrumMaster 
-        } catch (error) {
-            console.log(error)
-            if (error.response.data.length <= 200) {
-                alert(error.response.data)
-            } else {
-                alert("Ha ocurrido un error inesperado")
-            }
-        }
+        this.cargarDatos()
 
     },
     methods:{
+        async cargarDatos(){
+            let idToken = this.$store.state.usuario.idToken
+
+
+            // Llamamos al backend
+            let config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}`
+                }
+            }
+
+            try {
+                let res = await axios.get(`proyecto/?q=${this.idProyecto}`, config)
+
+                let proyecto = res.data[0]
+                this.proyecto = proyecto
+
+                this.nombre = proyecto.fields.nombre
+                this.descripcion = proyecto.fields.descripcion
+                this.fechaInicio = proyecto.fields.fechaInicio ? new Date(proyecto.fields.fechaInicio).toLocaleString() : null
+                this.fechaFin = proyecto.fields.fechaFin ? new Date(proyecto.fields.fechaFin).toLocaleString() : null
+                this.estado = proyecto.fields.estado
+                this.scrumMaster = proyecto.fields.scrumMaster 
+            } catch (error) {
+                console.log(error)
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
+        },
         async actualizar(){
             
             const idToken = this.$store.state.usuario.idToken
@@ -272,6 +321,7 @@ export default {
                 await this.axios.delete(`/proyecto/?idProyecto=${this.idProyecto}&mensaje=${mensaje}`, config)
 
                 alert("Proyecto Cancelado")
+                this.cargarDatos()
             } catch (error) {
                 if (error.response.data.length <= 200) {
                     alert(error.response.data)
@@ -303,7 +353,36 @@ export default {
                     alert("Ha ocurrido un error inesperado")
                 }
             }
-        }
+        },
+
+        async finalizarProyecto(){
+            const idToken = this.$store.state.usuario.idToken
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}` 
+                }
+            }
+
+            const body1 = {
+                id: this.idProyecto,
+            }
+            try {
+                
+                let res = await this.axios.put(`/proyecto/finalizarProyecto`, body1, config)
+                alert("Proyecto Finalizado")
+                this.dialogFinalizarProyecto = false
+                this.cargarDatos()
+
+            } catch (error) {
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+            }
+        },
     }
     
 }
@@ -317,6 +396,15 @@ export default {
 
 .textoInformacionAccion {
     color: rgb(197, 52, 52);
+}
+
+.informacionAccionF {
+    /* rgba(230, 62, 62, 0.159) */
+    background-color: rgba(29, 255, 131, 0.159);
+}
+
+.textoInformacionAccionF {
+    color: rgb(57, 197, 52);
 }
 
 .inputConfirmacionAccion {

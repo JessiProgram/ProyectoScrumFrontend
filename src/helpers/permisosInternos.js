@@ -42,7 +42,8 @@ export const codigosPermisosInternos = [
     'proyectos.eliminar_actividad_historia_usuario',
     'proyectos.crear_actividad_historia_usuario',
     'proyectos.listar_actividad_historia_usuario',
-    'proyectos.generar_burndown_chart'
+    'proyectos.generar_burndown_chart',
+    'proyectos.finalizar_proyecto',
 ]
 
 export const nombresPermisosInternos = [
@@ -89,5 +90,6 @@ export const nombresPermisosInternos = [
     'Eliminar actividad de historia de usuario',
     'Crear actividad de historia usuario',
     'Listar actividad de historia de usuario',
-    'Generar Burndown Chart'
+    'Generar Burndown Chart',
+    'Finalizar Proyecto',
 ]

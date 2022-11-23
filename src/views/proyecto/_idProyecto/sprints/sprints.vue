@@ -7,11 +7,12 @@
                 </template>
             </v-breadcrumbs>
         </div>
-        <v-container>
+        <v-container v-if="proyecto">
             <h3>Sprints</h3>
 
 
             <v-btn class="blue--text mr-2 mb-2" outlined 
+            :disabled="proyecto.fields.estado === 'cancelado'|| proyecto.fields.estado === 'Finalizado'"
             v-on:click="dialogCrear = true">
                 Nuevo Sprint
             </v-btn>
@@ -231,6 +232,18 @@ export default {
     },
     async mounted() {
         this.idProyecto = this.$route.params.idProyecto
+        const idToken = this.$store.state.usuario.idToken
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${idToken}` 
+            }
+        }
+        let resP = await this.axios.get(`/proyecto/?q=${this.idProyecto}`, config)
+        this.proyecto = resP.data[0]
+
+
         this.inicializarLista()
     },
     methods:{

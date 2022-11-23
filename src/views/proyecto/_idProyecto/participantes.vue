@@ -15,7 +15,7 @@
                 text
                 rounded
                 small
-                :disabled="proyecto.fields.estado === 'cancelado'"
+                :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                 color="blue"
                 class="ml-3"
                 @click="openDialogAgregarParticipante"
@@ -62,7 +62,8 @@
                                     </v-icon>
                                 </v-btn>
                                 <v-btn
-                                    :disabled="participantes.length <= 1 || proyecto.fields.estado === 'cancelado'"
+                                    :disabled="participantes.length <= 1 || proyecto.fields.estado === 'cancelado' 
+                                    || proyecto.fields.estado === 'Finalizado'"
                                     class="mr-3"
                                     fab
                                     dark
@@ -197,7 +198,8 @@
                         @click="actualizarParticipante"
                         class="mt-3 mr-2"
                         outlined
-                        :disabled="proyecto.fields.estado === 'cancelado'"
+                        :disabled="proyecto.fields.estado === 'cancelado'
+                        || proyecto.fields.estado === 'Finalizado'"
                         color="green"
                     >
                         Actualizar participante

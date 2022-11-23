@@ -14,6 +14,9 @@
                     <thead>
                         <tr>
                             <th class="text-left">
+                                Fecha
+                            </th>
+                            <th class="text-left">
                                 Titulo
                             </th>
                             <th class="text-left">
@@ -35,6 +38,7 @@
                             v-for="(item, index) in actividades"
                             :key="index"
                         >
+                            <td>{{ item.fields.fecha ? new Date(item.fields.fecha ).toLocaleString() : null }}</td>
                             <td>{{ item.fields.titulo }}</td>
                             <td>{{ item.fields.descripcion }}</td>
                             <td>{{ item.fields.horasTrabajadas }}</td>
@@ -46,6 +50,7 @@
                                     dark
                                     x-small
                                     color="red"
+                                    :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                                     @click="openDialogEliminarActividad(item)"
                                 >
                                     <v-icon dark>

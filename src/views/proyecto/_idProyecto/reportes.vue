@@ -18,7 +18,11 @@
                 :size="50"
                 color="primary"
                 indeterminate
+                v-if="!textoMostrar"
                 ></v-progress-circular>
+                <div v-else>
+                    {{textoMostrar}}
+                </div>
             </div>
 
         </v-container>
@@ -41,6 +45,8 @@ export default {
             puntos: [],
             y: [],
             x:[],
+
+            textoMostrar:'',
 
             items: [
                 {
@@ -106,7 +112,10 @@ export default {
             } catch (error) {
                 console.log(error)
                 if (error.response.data.length <= 200) {
-                    alert(error.response.data)
+                    if(error.response.data.includes('No se pudieron obtener los puntos del Burndown Chart'))
+                        this.textoMostrar = "Aun no se puede generar el reporte, no hay datos"
+                    else
+                        alert(error.response.data)
                 } else {
                     alert("Ha ocurrido un error inesperado")
                 }

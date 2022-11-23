@@ -16,7 +16,8 @@
                 large
                 color="blue"
                 class="mb-10"
-                :disabled="proyecto.fields.estado === 'cancelado'"
+                :disabled="proyecto.fields.estado === 'cancelado'
+                || proyecto.fields.estado === 'Finalizado'"
                 @click="dialogCreacion = true"
             >
                 <v-icon left>
@@ -31,7 +32,8 @@
                 large
                 color="blue"
                 class="mb-10 ml-5"
-                :disabled="proyecto.fields.estado === 'cancelado'"
+                :disabled="proyecto.fields.estado === 'cancelado'
+                || proyecto.fields.estado === 'Finalizado'"
                 @click="dialogImportar = true"
             >
                 <v-icon left>
@@ -76,7 +78,8 @@
 
                         <v-btn
                             @click="openDialogEliminarRol(item)"
-                            :disabled="sePuedeEliminar() || proyecto.fields.estado === 'cancelado'"
+                            :disabled="sePuedeEliminar() || proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'"
                             color="red"
                             text
                             outlined
@@ -139,7 +142,8 @@
 
                     <v-btn
                         @click="actualizarDatos"
-                        :disabled="proyecto.fields.estado === 'cancelado'"
+                        :disabled="proyecto.fields.estado === 'cancelado'
+                        || proyecto.fields.estado === 'Finalizado'"
                         class="mt-3 mr-2"
                         outlined
                         color="green"
@@ -166,7 +170,8 @@
                         @click="actualizarPermisosDelRol"
                         class="mt-3 mr-2"
                         outlined
-                        :disabled="proyecto.fields.estado === 'cancelado'"
+                        :disabled="proyecto.fields.estado === 'cancelado'
+                        || proyecto.fields.estado === 'Finalizado'"
                         color="green"
                     >
                         Actualizar roles

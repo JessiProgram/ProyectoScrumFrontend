@@ -37,14 +37,18 @@
                         <td>{{ historia.fields.estadoCadena }}</td>
                         <td>
                             <v-btn class="mr-3" fab dark x-small color="green" 
-                            :disabled="historia.fields.estado == 'cancelada'
-                            || proyecto.fields.estado === 'cancelado'"
+                            :disabled="historia.fields.estado == 'cancelada'"
                             @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)">
                                 <v-icon dark>
                                     mdi-eye
                                 </v-icon>
                             </v-btn>
-
+                            <v-btn class="mr-3" fab dark x-small color="green"
+                                @click="$router.push(`/proyecto/${idProyecto}/product-backlog/actividades/${historia.pk}`)">
+                                <v-icon dark>
+                                    mdi-format-list-checks
+                                </v-icon>
+                            </v-btn>
                             <v-btn small outlined color="green"
                             @click="verTablero(historia)"
                             v-if="sprint && sprint.fields.estado === 'En Ejecución'">
@@ -54,7 +58,8 @@
                             <td>    
                             <v-btn class="mr-3" fab dark x-small color="red" 
                             :disabled="historia.fields.estado == 'cancelada'
-                            || proyecto.fields.estado === 'cancelado'"
+                            || proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'"
                             @click="openDialogCambiarEstado(false, historia)" placeholder="Rechazar">
                                 <v-icon dark>
                                     mdi-window-close
@@ -63,7 +68,8 @@
 
                             <v-btn class="mr-3" fab dark x-small color="green" 
                             :disabled="historia.fields.estado == 'cancelada'
-                            || proyecto.fields.estado === 'cancelado'"
+                            || proyecto.fields.estado === 'cancelado'
+                            || proyecto.fields.estado === 'Finalizado'"
                             @click="openDialogCambiarEstado(true, historia)" placeholder="Aceptar">
                                 <v-icon dark>
                                     mdi-check

@@ -60,7 +60,7 @@
                     v-if="$store.getters['usuario/estaAutenticado']" 
                     class="green--text mr-2 mb-2" 
                     outlined
-                    :disabled="!posibleIniciar || proyecto.fields.estado === 'cancelado'"
+                    :disabled="!posibleIniciar || proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                     v-on:click="iniciarProyecto()"
                     >
                         {{estadoProyecto}}
@@ -184,7 +184,7 @@ export default {
         this.proyecto = res.data[0]
 
         this.posibleIniciar = this.proyecto.fields.estado !== 'iniciado'
-        this.estadoProyecto = this.proyecto.fields.estado === 'iniciado'?"Proyecto Iniciado":"Iniciar Proyecto"
+        this.estadoProyecto = this.proyecto.fields.estado === 'planificacion'? `Proyecto ${this.proyecto.fields.estado}` : "Iniciar Proyecto"
 
         this.obtenerSprint()
     },
