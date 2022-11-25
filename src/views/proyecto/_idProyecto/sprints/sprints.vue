@@ -13,7 +13,9 @@
 
             <v-btn class="blue--text mr-2 mb-2" outlined 
             :disabled="proyecto.fields.estado === 'cancelado'|| proyecto.fields.estado === 'Finalizado'"
-            v-on:click="dialogCrear = true">
+            v-on:click="dialogCrear = true"
+            v-if="$store.getters['usuario/getPermisosProyecto'].includes('crear_sprint')"
+            >
                 Nuevo Sprint
             </v-btn>
 
@@ -51,13 +53,16 @@
                         <td>{{ sprint.fields.estado }}</td>
                         <td>
                             <v-btn class="mr-3" fab dark x-small color="green"
-                                @click="editarSprint(sprint)">
+                                @click="editarSprint(sprint)"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('obtener_sprint')"
+                                >
                                 <v-icon dark>
                                     mdi-pencil
                                 </v-icon>
                             </v-btn>
                             <v-btn 
-                            v-if="sprint.fields.estado !== 'Finalizado' && sprint.fields.estado !== 'Cancelado'"
+                            v-if="sprint.fields.estado !== 'Finalizado' && sprint.fields.estado !== 'Cancelado' && 
+                            $store.getters['usuario/getPermisosProyecto'].includes('borrar_sprint')"
                             class="mr-3" fab dark x-small color="red" @click="openDialogEliminarSprint(sprint)">
                                 <v-icon dark>
                                     mdi-delete

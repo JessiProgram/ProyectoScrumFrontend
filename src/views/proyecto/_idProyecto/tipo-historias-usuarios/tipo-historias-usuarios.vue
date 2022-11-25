@@ -10,10 +10,14 @@
         <v-container v-if="proyecto">
             <h3>Tipo Historias de Usuario</h3>
 
-            <v-text-field v-model="nombre" label="Nombre Tipo Historia Usuario" required></v-text-field>
+            <v-text-field 
+            v-if="$store.getters['usuario/getPermisosProyecto'].includes('crear_tipo_HU')"
+            
+            v-model="nombre" label="Nombre Tipo Historia Usuario" required></v-text-field>
 
             <div class="container text-right">
                 <v-btn outlined 
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('crear_tipo_HU')"
                 :disabled="!nombre || proyecto.fields.estado === 'cancelado'
                 || proyecto.fields.estado === 'Finalizado'" 
                 @click="crear()" @loading="creando" color="indigo">
@@ -51,6 +55,7 @@
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="red" 
+                            v-if="$store.getters['usuario/getPermisosProyecto'].includes('borrar_tipo_HU')"
                             :disabled="proyecto.fields.estado === 'cancelado'
                             || proyecto.fields.estado === 'Finalizado'"
                             @click="openDialogEliminarTipoHU(tipoHU)">
@@ -66,6 +71,7 @@
             <v-btn outlined 
             :disabled="proyecto.fields.estado === 'cancelado'
             || proyecto.fields.estado === 'Finalizado'"
+            v-if="$store.getters['usuario/getPermisosProyecto'].includes('importar_tipo_HU')"
             @click="openDialogImportar()" color="indigo" class="mt-4 mb-5">
                 Buscar e Importar
             </v-btn>

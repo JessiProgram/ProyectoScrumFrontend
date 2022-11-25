@@ -37,7 +37,10 @@ export default {
         dataX: {
             type: Array,
         },
-        dataY: {
+        dataYreal: {
+            type: Array,
+        },
+        dataYideal: {
             type: Array,
         },
         chartId: {
@@ -81,15 +84,25 @@ export default {
     },
     mounted(){
         console.log('this.dataX',this.dataX)
-        console.log('this.dataY',this.dataY)
+        console.log('this.dataY',this.dataYreal)
+        console.log('this.dataY',this.dataYideal)
         this.chartData = {
             labels: this.dataX,
             datasets: [
                 {
-                    label: 'Puntos de historia',
+                    label: 'Puntos de historia actual',
                     backgroundColor: 'green',
-                    data: this.dataY,
+                    data: this.dataYreal,
                     borderColor: 'green',
+                    pointStyle: 'circle',
+                    pointRadius: 10,
+                    pointHoverRadius: 15
+                },
+                {
+                    label: 'Puntos de historia ideal',
+                    backgroundColor: 'blue',
+                    data: this.dataYideal,
+                    borderColor: 'blue',
                     pointStyle: 'circle',
                     pointRadius: 10,
                     pointHoverRadius: 15

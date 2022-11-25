@@ -184,7 +184,7 @@ export default {
         this.proyecto = res.data[0]
 
         this.posibleIniciar = this.proyecto.fields.estado !== 'iniciado'
-        this.estadoProyecto = this.proyecto.fields.estado === 'planificacion'? `Proyecto ${this.proyecto.fields.estado}` : "Iniciar Proyecto"
+        this.estadoProyecto = this.proyecto.fields.estado !== 'planificacion'? `Proyecto ${this.proyecto.fields.estado}` : "Iniciar Proyecto"
 
         this.obtenerSprint()
     },

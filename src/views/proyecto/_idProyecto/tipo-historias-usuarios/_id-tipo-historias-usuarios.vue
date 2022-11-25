@@ -15,6 +15,8 @@
                     <v-btn outlined 
                     :disabled="!nombreTipoHU || nombreTipoHU === tipoHU.fields.nombre || proyecto.fields.estado === 'cancelado'
                     || proyecto.fields.estado === 'Finalizado'" 
+                    v-if="$store.getters['usuario/getPermisosProyecto'].includes('actualizar_tipo_HU')"
+
                     @click="actualizarTipoHU()" @loading="creando" color="indigo" class="mb-5">
                         Actualizar Nombre
                     </v-btn>
@@ -23,14 +25,18 @@
 
 
             <h3>Columnas</h3>
-            <v-text-field v-model="nombre" label="Nombre Nueva Columna" required></v-text-field>
+            <v-text-field 
+            v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_columnas_tipo_HU')"
+            v-model="nombre" label="Nombre Nueva Columna" required></v-text-field>
             <div class="container text-right">
                 <v-btn outlined 
                 :disabled="!nombre || 
                 (columnaSeleccionada && columnaSeleccionada.fields.nombre === nombre)
                 || proyecto.fields.estado === 'cancelado'
                 || proyecto.fields.estado === 'Finalizado'" 
-                @click="crear()" @loading="creando" color="indigo">
+                @click="crear()" @loading="creando" color="indigo"
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_columnas_tipo_HU')"
+                >
                     <div v-if="!esActualizar">Agregar columna</div><div v-else>Actualizar columna</div>
                 </v-btn>
                 <v-btn v-if="esActualizar" outlined @click="limparSeleccion()" color="red" class="ml-3">
@@ -61,12 +67,14 @@
                                 :disabled="deshabilitarCambio || index === 0 || 
                                 proyecto.fields.estado === 'cancelado'
                                 || proyecto.fields.estado === 'Finalizado'"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_columnas_tipo_HU')"
                                 @click="actualizarOrden(columna, columna.fields.orden , false)">
                                 <v-icon dark>
                                     mdi-arrow-up-thick
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="blue"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_columnas_tipo_HU')"
                                 :disabled="deshabilitarCambio || index === columnas.length-1 || proyecto.fields.estado === 'cancelado'
                                 || proyecto.fields.estado === 'Finalizado'"
                                 @click="actualizarOrden(columna, columna.fields.orden , true)">
@@ -75,6 +83,7 @@
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="green" 
+                            v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_columnas_tipo_HU')"
                             :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                                 @click="openDialogActualizarTipoHU(columna)">
                                 <v-icon dark>
@@ -83,7 +92,9 @@
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="red" @click="openDialogEliminarTipoHU(columna)" 
                             :disabled="columnas.length <=3 || proyecto.fields.estado === 'cancelado'
-                            || proyecto.fields.estado === 'Finalizado'">
+                            || proyecto.fields.estado === 'Finalizado'"
+                            v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_columnas_tipo_HU')"
+                            >
                                 <v-icon dark>
                                     mdi-delete
                                 </v-icon>

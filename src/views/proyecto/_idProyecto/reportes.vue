@@ -11,7 +11,7 @@
         <v-container class="container" v-if="proyecto && proyecto.fields">
             <h3 class="mb-2">Burndonw Chart</h3>
             
-            <LineChart v-if="x.length" :dataY="y" :dataX="x"/>
+            <LineChart v-if="x.length" :dataYreal="yreal" :dataX="x" :dataYideal="yideal"/>
 
             <div v-else class="text-center mt-15" >
                 <v-progress-circular
@@ -43,7 +43,8 @@ export default {
             proyecto:null,
             
             puntos: [],
-            y: [],
+            yideal: [],
+            yreal:[],
             x:[],
 
             textoMostrar:'',
@@ -97,17 +98,20 @@ export default {
 
                 this.puntos = res.data
 
-                this.x = []
-                this.y = []
+                this.xreal = []
+                this.yreal = []
 
-                for (let i = 0; i < this.puntos.length; i++) {
+                for (let i = 0; i < this.puntos.length/2; i++) {
                     const punto = this.puntos[i];
                     this.x.push('Sprint ' + punto[0])
-                    this.y.push(punto[1] ? punto[1] : 0)
+                    this.yreal.push(punto[1] ? punto[1] : 0)
+                }
+                for (let i = this.puntos.length/2; i < this.puntos.length; i++) {
+                    const punto = this.puntos[i];
+                    this.yideal.push(punto[1] ? punto[1] : 0)
                 }
 
                 console.log('this.x',this.x)
-                console.log('this.y',this.y)
 
             } catch (error) {
                 console.log(error)

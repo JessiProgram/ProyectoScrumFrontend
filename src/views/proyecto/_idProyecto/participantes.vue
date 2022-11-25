@@ -15,6 +15,7 @@
                 text
                 rounded
                 small
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('agregar_participante')"
                 :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                 color="blue"
                 class="ml-3"
@@ -69,6 +70,7 @@
                                     dark
                                     x-small
                                     color="red"
+                                    v-if="$store.getters['usuario/getPermisosProyecto'].includes('borrar_participante')"
                                     @click="openDialogEliminarParticipante(item)"
                                 >
                                     <v-icon dark>
@@ -201,6 +203,7 @@
                         :disabled="proyecto.fields.estado === 'cancelado'
                         || proyecto.fields.estado === 'Finalizado'"
                         color="green"
+                        v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_participante')"
                     >
                         Actualizar participante
                     </v-btn>

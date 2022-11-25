@@ -18,6 +18,8 @@
                     class="mb-10"
                     :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                     @click="dialogCreacion = true"
+                    v-if="$store.getters['usuario/getPermisosProyecto'].includes('crear_historia_usuario')"
+
                 >
                     <v-icon left>
                         mdi-plus
@@ -51,24 +53,29 @@
                         <td>{{ historia.fields.estadoCadena }}</td>
                         <td>
                             <v-btn class="mr-3" fab dark x-small color="green"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('obtener_historia_usuario')"
                                 @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)">
                                 <v-icon dark>
                                     mdi-eye
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="green"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('listar_actividad_historia_usuario')"
                                 @click="$router.push(`/proyecto/${idProyecto}/product-backlog/actividades/${historia.pk}`)">
                                 <v-icon dark>
                                     mdi-format-list-checks
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="green"
+                            v-if="$store.getters['usuario/getPermisosProyecto'].includes('obtener_historial_historia')"
+
                                 @click="$router.push(`/proyecto/${idProyecto}/product-backlog/historial/${historia.pk}`)">
                                 <v-icon dark>
                                     mdi-history
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mr-3" fab dark x-small color="green"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('actualizar_historia_usuario')"
                                 @click="openDialogActualizar(historia)">
                                 <v-icon dark>
                                     mdi-pencil
@@ -78,6 +85,7 @@
                             :disabled="historia.fields.estado == 'cancelada'
                             || proyecto.fields.estado === 'cancelado'
                             || proyecto.fields.estado === 'Finalizado'"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('borrar_historia_usuario')"
                             @click="openDialogEliminar(historia)">
                                 <v-icon dark>
                                     mdi-delete

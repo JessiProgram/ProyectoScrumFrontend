@@ -23,6 +23,7 @@ export default async ({ to, from, redirect }) => {
         let res = await axios.get(`/proyecto/participante?correo=${usuario.email}&idProyecto=${to.params.idProyecto}`, config)
         
         if(res.data === 'NoExiste') redirect('/')
+        store.commit('usuario/setParticipante',res.data)
 
         let permisosDelRol = []
         // vemos si tiene ya guardados los permisos

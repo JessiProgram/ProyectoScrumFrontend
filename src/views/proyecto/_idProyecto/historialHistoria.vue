@@ -76,6 +76,7 @@
                                     dark
                                     x-small
                                     color="green"
+                                    v-if="$store.getters['usuario/getPermisosProyecto'].includes('restaurar_historia_usuario')"
                                     :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                                     @click="openDialogRestaurarHistoria(item)"
                                 >

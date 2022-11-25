@@ -121,12 +121,14 @@
                             <td>
                                 <v-btn class="mr-3" fab dark x-small color="green"
                                     :disabled="sprint.fields.estado !== 'Planificación'"
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('modificar_miembro_sprint')"
                                     @click="openDialogActualizarMiembro(miembro)">
                                     <v-icon dark>
                                         mdi-pencil
                                     </v-icon>
                                 </v-btn>
                                 <v-btn class="mr-3" fab dark x-small 
+                                v-if="$store.getters['usuario/getPermisosProyecto'].includes('borrar_miembro_sprint')"
                                 :disabled="sprint.fields.estado !== 'Planificación'"
                                 color="red" 
                                 @click="openDialogEliminarMiembro(miembro)">

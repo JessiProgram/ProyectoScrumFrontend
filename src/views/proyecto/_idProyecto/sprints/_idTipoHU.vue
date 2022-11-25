@@ -46,7 +46,6 @@
                                         outlined
                                         small
                                         color="white"
-                                        :disabled="historia.fields.estado === 'aceptada'"
                                         @click="$router.push(`/proyecto/${idProyecto}/product-backlog/${historia.pk}`)"
                                         ><v-icon>mdi-eye</v-icon></v-btn>
                                         
@@ -54,6 +53,7 @@
                                         outlined
                                         small
                                         color="white"
+                                        v-if="$store.getters['usuario/getPermisosProyecto'].includes('obtener_actividad_historia_usuario')"
                                             @click="$router.push(`/proyecto/${idProyecto}/product-backlog/actividades/${historia.pk}`)">
                                             <v-icon>
                                                 mdi-format-list-checks
@@ -67,14 +67,16 @@
                                         color="white"
                                         :disabled="indexC === 0 || historia.fields.estado === 'aceptada'"
                                         @click="openDialogActividad(false, historia, indexC)"
+                                        v-if="$store.getters['usuario/getParticipante'].pk === historia.fields.desarrollador_asignado"
                                         ><v-icon>mdi-arrow-left</v-icon></v-btn>
-                                        
+
                                         <v-btn
                                         class="ma-2"
                                         outlined
                                         small
                                         color="white"
                                         :disabled="indexC + 1 === columnasNombres.length || historia.fields.estado === 'aceptada'"
+                                        v-if="$store.getters['usuario/getParticipante'].pk === historia.fields.desarrollador_asignado"
                                         @click="openDialogActividad(true, historia, indexC)"
                                         ><v-icon>mdi-arrow-right</v-icon></v-btn>
                                     </v-container>

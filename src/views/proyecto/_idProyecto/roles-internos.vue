@@ -19,6 +19,7 @@
                 :disabled="proyecto.fields.estado === 'cancelado'
                 || proyecto.fields.estado === 'Finalizado'"
                 @click="dialogCreacion = true"
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('crear_rol_interno')"
             >
                 <v-icon left>
                     mdi-plus
@@ -35,6 +36,8 @@
                 :disabled="proyecto.fields.estado === 'cancelado'
                 || proyecto.fields.estado === 'Finalizado'"
                 @click="dialogImportar = true"
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('importar_roles_internos')"
+
             >
                 <v-icon left>
                     mdi-plus
@@ -84,6 +87,8 @@
                             text
                             outlined
                             class="mr-0"
+                            v-if="$store.getters['usuario/getPermisosProyecto'].includes('importar_roles_internos')"
+
                         >
                             Eliminar rol
                         </v-btn>
@@ -147,6 +152,8 @@
                         class="mt-3 mr-2"
                         outlined
                         color="green"
+                        v-if="$store.getters['usuario/getPermisosProyecto'].includes('actualizar_rol_interno')"
+
                     >
                         Actualizar datos
                     </v-btn>
@@ -173,6 +180,8 @@
                         :disabled="proyecto.fields.estado === 'cancelado'
                         || proyecto.fields.estado === 'Finalizado'"
                         color="green"
+                        v-if="$store.getters['usuario/getPermisosProyecto'].includes('actualizar_rol_interno')"
+
                     >
                         Actualizar roles
                     </v-btn>

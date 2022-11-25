@@ -15,6 +15,7 @@ export default {
         permisosUsuario: [],
         proyectoID: -1,
         permisosProyecto: [],
+        participante: null,
     },
     getters: {
         getIdToken (state) {
@@ -37,6 +38,9 @@ export default {
         },
         getPermisosProyecto(state) {
             return state.permisosProyecto
+        },
+        getParticipante(state) {
+            return state.participante
         },
         
         // OTROS
@@ -88,6 +92,9 @@ export default {
         },
         setPermisosProyecto (state, permisosProyecto) {
             state.permisosProyecto = permisosProyecto ? permisosProyecto : null
+        },
+        setParticipante(state, participante) {
+            state.participante = participante ? participante : null
         },
     },
     actions: {
@@ -164,6 +171,8 @@ export default {
             commit('setProyectoID', -1)
 
             commit('setPermisosProyecto', [])
+
+            commit('setParticipante', null)
 
 
         },

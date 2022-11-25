@@ -22,8 +22,7 @@
                             "Agiliza tus procesos"
                         </p>
                         <div class="text--primary">
-                            relating to or dependent on charity; charitable.<br>
-                            "an eleemosynary educational institution."
+                            Administra los usuarios y asigna roles
                         </div>
                     </v-card-text>
                     <v-card-actions>
@@ -51,8 +50,7 @@
                             "Agiliza tus procesos"
                         </p>
                         <div class="text--primary">
-                            relating to or dependent on charity; charitable.<br>
-                            "an eleemosynary educational institution."
+                            Administra los roles, crea, elimina, y asigna permisos.
                         </div>
                     </v-card-text>
                     <v-card-actions>
@@ -80,8 +78,7 @@
                             "Agiliza tus procesos"
                         </p>
                         <div class="text--primary">
-                            relating to or dependent on charity; charitable.<br>
-                            "an eleemosynary educational institution."
+                            Crea un nuevo proyecto
                         </div>
                     </v-card-text>
                     <v-card-actions>

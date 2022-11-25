@@ -38,8 +38,10 @@
                 </v-col>
             </v-row>
             <v-btn class="blue--text mr-2 mb-2" outlined 
-                v-if="sprint.fields.estado === 'Planificación'"
+                v-if="sprint.fields.estado === 'Planificación' &&
+                $store.getters['usuario/getPermisosProyecto'].includes('actualizar_sprint')"
                 v-on:click="avanzarSprint()"
+                
                 :disabled="sprintBacklog.length === 0 || !flagMiembrosAsignados">
                     Iniciar Sprint
                 </v-btn>
@@ -67,6 +69,7 @@
                                     </th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 <tr v-for="backlog in listaHistorias" :key="backlog.pk">
                                     <td>{{ backlog.fields.nombre }}</td>
@@ -83,7 +86,7 @@
                                             <v-icon>mdi-eye</v-icon>
                                             </v-btn>
                                             <v-btn @click="agregarHistoria(backlog)"
-                                            v-if="sprint.fields.estado === 'Planificación'">
+                                            v-if="sprint.fields.estado === 'Planificación' && $store.getters['usuario/getPermisosProyecto'].includes('agregar_historia_sprintbacklog')">
                                             <v-icon>mdi-arrow-right</v-icon>
                                             </v-btn>
 
@@ -133,13 +136,18 @@
                                     </v-btn>
 
                                     <v-btn @click="openDialogActualizar(backlog)" 
-                                    v-if="sprint.fields.estado === 'Planificación'">
+                                    v-if="sprint.fields.estado === 'Planificación' && $store.getters['usuario/getPermisosProyecto'].includes('actualizar_historia_usuario')">
                                     <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
 
                                     <v-btn @click="quitarHistoria(backlog)"
-                                    v-if="sprint.fields.estado === 'Planificación'">
+                                    v-if="sprint.fields.estado === 'Planificación' && $store.getters['usuario/getPermisosProyecto'].includes('borrar_historia_sprintbacklog')">
                                     <v-icon>mdi-arrow-left</v-icon>
+                                    </v-btn>
+
+                                    <v-btn @click="openDialogReasignar(backlog)" 
+                                    v-if="sprint.fields.estado === 'En Ejecución' && $store.getters['usuario/getPermisosProyecto'].includes('actualizar_historia_usuario')">
+                                    <v-icon>mdi-account-convert</v-icon>
                                     </v-btn>
 
                                     <v-btn 
@@ -352,6 +360,57 @@
                     </v-card>
                     </v-dialog>
                 </v-row>
+
+
+                <v-dialog
+                v-model="dialogReasignar"
+                v-if="historiaSeleccionada"
+                fullscreen
+                hide-overlay
+                transition="dialog-bottom-transition"
+                >
+                    <v-card>
+                        <v-toolbar
+                            dark
+                            color="primary"
+                        >
+                            <v-btn
+                                icon
+                                dark
+                                @click="dialogReasignar = false"
+                            >
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                            <v-toolbar-title>
+                                Reasignar Desarrollador
+                            </v-toolbar-title>
+                            <v-spacer></v-spacer>
+                            <v-toolbar-items>
+                            </v-toolbar-items>
+                        </v-toolbar>
+
+                        <div class="container my-5 px-10">
+                            <h4>Remplazar al desarrollador {{historiaSeleccionada.fields.desarrollador_asignado_email}} con el desarrollador:</h4>
+                            <v-divider class="mb-5" />
+                            <v-combobox
+                                v-model="desarrollador_asignado_email_seleccionado"
+                                :items="listaMiembrosCorreos"
+                                label="Participante asignado de la historia de usuario"
+                                outlined
+                                dense
+                            ></v-combobox>
+                            <v-btn
+                                :disabled="historiaSeleccionada.fields.desarrollador_asignado_email === desarrollador_asignado_email_seleccionado"
+                                @click="reasignarDesarrollador()"
+                                class="mt-3 mr-2 mb-4"
+                                outlined
+                                color="green"
+                            >
+                                Reasignar Desarrollador
+                            </v-btn>
+                        </div>
+                    </v-card>
+                </v-dialog>
         </v-container>
         <v-container v-else>
             Debe agregar miembros al equipo del sprint
@@ -434,6 +493,10 @@ export default {
 
             dialogWarningIniciar: false,
 
+            desarrollador_asignado_email_seleccionado: '',
+            desarrollador_asignado_seleccionado: -1,
+            dialogReasignar: false,
+            
         }
     },
     components: {
@@ -789,6 +852,55 @@ export default {
                 flag = false; 
             }
             return flag
+        },
+
+        openDialogReasignar(data){
+            this.historiaSeleccionada = data
+            this.desarrollador_asignado_seleccionado = data.fields.desarrollador_asignado
+            this.desarrollador_asignado_email_seleccionado = data.fields.desarrollador_asignado_email
+            this.dialogReasignar = true
+        },
+
+        async reasignarDesarrollador(){
+            try {
+                let idToken = this.$store.state.usuario.idToken
+
+
+                // Llamamos al backend
+                let config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}`
+                    }
+                }
+
+                //obtenemos la id del participante
+                let indexParticipante1 = this.listaParticipantes.map(e => e.fields.email).indexOf(this.historiaSeleccionada.fields.desarrollador_asignado_email)
+                let indexParticipante2 = this.listaParticipantes.map(e => e.fields.email).indexOf(this.desarrollador_asignado_email_seleccionado)
+
+                // Agregar roles
+                const body = {
+                    idProyecto: this.idProyecto,
+                    idSprint: this.idSprint,
+                    idUsuario1: this.listaParticipantes[indexParticipante1].pk,
+                    idUsuario2: this.listaParticipantes[indexParticipante2].pk
+                }
+                
+                await this.axios.put(`/sprints/reasignar-historias`, body, config)
+
+                this.dialogReasignar = false
+
+                this.obtenerSprintBacklog()
+                    
+            } catch (error) {
+                console.log(error)
+                if (error.response.data.length <= 200) {
+                    alert(error.response.data)
+                } else {
+                    alert("Ha ocurrido un error inesperado")
+                }
+
+            }
         }
 
     }

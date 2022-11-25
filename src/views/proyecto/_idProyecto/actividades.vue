@@ -42,7 +42,13 @@
                             <td>{{ item.fields.titulo }}</td>
                             <td>{{ item.fields.descripcion }}</td>
                             <td>{{ item.fields.horasTrabajadas }}</td>
-                            <td>{{ correo }}</td>
+                            <td v-if="!Number(item.fields.participante)">{{ item.fields.participante }}</td>
+                            <td v-else>
+                                <v-progress-linear
+                                indeterminate
+                                color="teal"
+                                ></v-progress-linear>
+                            </td>
                             <td>
                                 <v-btn
                                     class="mr-3"
@@ -50,6 +56,7 @@
                                     dark
                                     x-small
                                     color="red"
+                                    v-if="$store.getters['usuario/getPermisosProyecto'].includes('eliminar_actividad_historia_usuario')"
                                     :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
                                     @click="openDialogEliminarActividad(item)"
                                 >
@@ -222,7 +229,13 @@ export default {
 
                 this.actividades = res.data
 
-                this.buscarCorreo(this.actividades[0].fields.participante)
+                for (let i = 0; i < this.actividades.length; i++) {
+                const element = this.actividades[i];
+                if(element.fields.participante)
+                    element.fields.participante = await this.buscarCorreo(element.fields.participante)
+            }
+
+            this.actividades = Object.assign({}, this.actividades)
 
             } catch (error) {
                 console.log(error)
@@ -285,7 +298,7 @@ export default {
 
                 let usuario = res.data[0]
           
-                this.correo = usuario.fields.email
+                return usuario.fields.email
             } catch (error) {
                 if (error.response.data.length <= 200) {
                     alert(error.response.data)

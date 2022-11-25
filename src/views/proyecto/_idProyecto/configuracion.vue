@@ -68,6 +68,7 @@
                     || proyecto.fields.estado === 'cancelado'
                     || proyecto.fields.estado === 'Finalizado'"
                 @click="actualizar()"
+                v-if="$store.getters['usuario/getPermisosProyecto'].includes('actualizar_proyecto')"
                 color="indigo">
                 Actualizar Proyecto
                 </v-btn>
@@ -79,6 +80,7 @@
             outlined
             :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
             @click="dialogEliminarProyecto=true"
+            v-if="$store.getters['usuario/getPermisosProyecto'].includes('eliminar_proyecto')"
             color="red">
             Cancelar Proyecto
             </v-btn>
@@ -87,6 +89,7 @@
             outlined
             :disabled="proyecto.fields.estado === 'cancelado' || proyecto.fields.estado === 'Finalizado'"
             @click="dialogFinalizarProyecto=true"
+            v-if="$store.getters['usuario/getPermisosProyecto'].includes('finalizar_proyecto')"
             color="green">
             Finalizar Proyecto
             </v-btn>
