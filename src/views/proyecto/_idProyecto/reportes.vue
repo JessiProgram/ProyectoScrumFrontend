@@ -108,7 +108,7 @@ export default {
                 }
                 for (let i = this.puntos.length/2; i < this.puntos.length; i++) {
                     const punto = this.puntos[i];
-                    this.yideal.push(punto[1] ? punto[1] : 0)
+                    this.yideal.push(punto[1] >= 0 ? punto[1] : 0)
                 }
 
                 console.log('this.x',this.x)
