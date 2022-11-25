@@ -269,7 +269,7 @@ export default {
                 this.fechaInicio = proyecto.fields.fechaInicio ? new Date(proyecto.fields.fechaInicio).toLocaleString() : null
                 this.fechaFin = proyecto.fields.fechaFin ? new Date(proyecto.fields.fechaFin).toLocaleString() : null
                 this.estado = proyecto.fields.estado
-                this.scrumMaster = proyecto.fields.scrumMaster 
+                this.buscarCorreo(proyecto.fields.scrumMaster)
             } catch (error) {
                 console.log(error)
                 if (error.response.data.length <= 200) {
@@ -335,19 +335,20 @@ export default {
         },
 
         async buscarCorreo(idParticipante){
-            const idToken = this.$store.state.usuario.idToken
-
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}` 
-                }
-            }
             
             try {
-                const res = await this.axios.get(`/proyecto/participantes?idParticipante=${idParticipante}`, config)
+                const idToken = this.$store.state.usuario.idToken
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}` 
+                    }
+                }
 
-                let usuario = res.data[0]
+                const responseUsuario = await axios.get(`/usuario/existe?id=${idParticipante}`, config)
+
+                let usuario = responseUsuario.data[0]
+                this.scrumMaster = usuario.fields.email
           
             } catch (error) {
                 if (error.response.data.length <= 200) {
